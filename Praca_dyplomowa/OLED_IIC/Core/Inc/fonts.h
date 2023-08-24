@@ -21,6 +21,7 @@
  */
 #ifndef FONTS_H
 #define FONTS_H 120
+//#define FONT16BIT
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -47,13 +48,20 @@ extern C {
  * @{
  */
 
+//#define FONT16BIT
+
 /**
  * @brief  Font structure used on my LCD libraries
  */
+
 typedef struct {
 	uint8_t FontWidth;    /*!< Font width in pixels */
 	uint8_t FontHeight;   /*!< Font height in pixels */
+#ifdef FONT16BIT
 	const uint16_t *data; /*!< Pointer to data font data array */
+#else
+	const uint8_t *data; /*!< Pointer to data font data array */
+#endif
 } FontDef_t;
 
 /**
@@ -73,7 +81,7 @@ typedef struct {
  * @brief    Library font variables
  * @{
  */
-
+#ifdef FONT16BIT
 /**
  * @brief  7 x 10 pixels font size structure
  */
@@ -88,10 +96,14 @@ extern FontDef_t Font_11x18;
  * @brief  16 x 26 pixels font size structure
  */
 extern FontDef_t Font_16x26;
-
+#endif
 /**
  * @}
  */
+
+extern FontDef_t artifaktElement_15x18;
+
+extern FontDef_t figures1_6x6;
 
 /**
  * @defgroup FONTS_Functions

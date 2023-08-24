@@ -1,0 +1,14 @@
+const uint8_t $(doc_name_ws)[] = {
+    $(start_block_images_table)
+    $(out_image_preview)
+    $(out_image_data),
+$(end_block_images_table)
+};
+
+/* Font information for $(doc_name_ws) */
+FontDef_t $(doc_name_ws)_$(out_image_width)x$(out_image_height) =
+{
+    $(out_image_width), /*  Width, in pixels, of space character */
+    $(out_image_height), /*  Character height */
+    $(doc_name_ws), /*  Character bitmap array */
+};

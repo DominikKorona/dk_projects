@@ -45,6 +45,9 @@ typedef struct {
 static SSD1306_t SSD1306;
 
 
+//#define FONT16BIT
+
+
 #define SSD1306_RIGHT_HORIZONTAL_SCROLL              0x26
 #define SSD1306_LEFT_HORIZONTAL_SCROLL               0x27
 #define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
@@ -298,8 +301,10 @@ char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
 	}
 
 	/* Go through font */
+
+#ifdef FONT16BIT
 	for (i = 0; i < Font->FontHeight; i++) {
-		b = Font->data[(ch - 32) * Font->FontHeight + i];
+		b = Font->data[(ch - 32) * Font->FontHeight + i]; /* ASCII numbers begin from 32*/
 		for (j = 0; j < Font->FontWidth; j++) {
 			if ((b << j) & 0x8000) {
 				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
@@ -308,6 +313,33 @@ char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
 			}
 		}
 	}
+#else
+			uint8_t num_bytes = (Font->FontWidth - 1) / 8 + 1; //width <= 8 ->1// <=16 ->2 // <= 24 ->3 ...
+			uint8_t num_char = Font->FontHeight * num_bytes;          //10*1          //10*2      // here is definition how to call next char
+			for (i = 0; i < Font->FontHeight; i++) {
+				if (Font->FontWidth <= 8){
+					b = Font->data[(ch - 32) * num_char + i]; /* ASCII number begins from 32*/
+									for (j = 0; j < Font->FontWidth; j++) {
+										if ((b << j) & 0x80) {
+											SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
+										} else {
+											SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
+										}
+									}
+				}
+				if (Font->FontWidth <= 16){
+					b = (Font->data[(ch - 32) * num_char + i*num_bytes] << 8) | Font->data[(ch - 32) * num_char + i*num_bytes + 1];
+									for (j = 0; j < Font->FontWidth; j++) {
+										if ((b << j) & 0x8000) {
+											SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
+										} else {
+											SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
+										}
+									}
+				}
+	}
+#endif
+
 
 	/* Increase pointer */
 	SSD1306.CurrentX += Font->FontWidth;
