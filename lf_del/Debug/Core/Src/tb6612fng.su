@@ -1,3 +1,0 @@
-../Core/Src/tb6612fng.c:11:6:tb6612fng_init	8	static
-../Core/Src/tb6612fng.c:20:6:tb6612fng_mode_control	16	static
-../Core/Src/tb6612fng.c:40:6:tb6612fng_set_motorA_speed	16	static
