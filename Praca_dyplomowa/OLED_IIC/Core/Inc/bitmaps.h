@@ -20,4 +20,24 @@ extern const uint8_t chessboard_63x63[];
 
 extern const uint8_t chessboard_57x57[];
 
+extern const uint8_t jack_84x58[];
+
+extern const uint8_t deagle_56x36[];
+
+extern const uint8_t bolt_5x2[];
+
+extern const uint8_t deagle2_56x36[];
+
+extern const uint8_t deagle3_56x36[];
+
+extern const uint8_t deagle4_56x36[];
+
+extern const uint8_t deagle5_56x36[];
+
+
+extern const uint8_t deagle6_56x36[];
+extern const uint8_t deagle7_56x36[];
+extern const uint8_t deagle8_56x36[];
+extern const uint8_t deagle9_56x36[];
+
 #endif /* INC_BITMAPS_H_ */

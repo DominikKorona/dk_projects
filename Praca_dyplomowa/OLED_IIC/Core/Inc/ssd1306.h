@@ -120,7 +120,7 @@ void SSD1306_Fill(SSD1306_COLOR_t Color);
  * @param  color: Color to be used for screen fill. This parameter can be a value of @ref SSD1306_COLOR_t enumeration
  * @retval None
  */
-void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color);
+void SSD1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR_t color);
 
 /**
  * @brief  Sets cursor pointer to desired location for strings
@@ -128,7 +128,7 @@ void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color);
  * @param  y: Y location. This parameter can be a value between 0 and SSD1306_HEIGHT - 1
  * @retval None
  */
-void SSD1306_GotoXY(uint16_t x, uint16_t y);
+void SSD1306_GotoXY(uint8_t x, uint8_t y);
 
 /**
  * @brief  Puts character to internal RAM
@@ -267,7 +267,7 @@ void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t *data, uint16_
  * @param  H : Height of the image
  * @param  color : 1-> white/blue, 0-> black
  */
-void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color);
+void SSD1306_DrawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8_t w, uint8_t h, uint8_t color);
 
 // scroll the screen for fixed rows
 

@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fonts.h"
@@ -33,6 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -41,6 +43,9 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
+
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart2;
@@ -52,9 +57,12 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
+
 
 /* USER CODE END PFP */
 
@@ -91,64 +99,81 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-#define DELAY 500
+uint32_t adcdmabuff[2];
+uint32_t Vref=0;
+
+//HAL_TIM_Base_Start_IT(&htim1);
+HAL_ADC_Start_IT(&hadc1);
+__IO uint8_t uADCConversionCpltFlag = 0;
+uint32_t uiADCRawValueBuffer[3];
+
+
 SSD1306_Init();
 
-SSD1306_GotoXY(5, 15);
-SSD1306_Puts ("!@#!!aBx", &artifaktElement_15x18, 1);
-SSD1306_UpdateScreen();
-
-
-HAL_Delay (DELAY);
-SSD1306_Clear();
-SSD1306_DrawBitmap(32, 0, &icon_48x48, 48, 48, SSD1306_COLOR_WHITE);
-SSD1306_UpdateScreen();
-
-HAL_Delay (DELAY);
-SSD1306_Clear();
-SSD1306_DrawBitmap(52, 5, &agh_24x44, 24, 44, SSD1306_COLOR_WHITE);
-SSD1306_UpdateScreen();
-
-
-HAL_Delay (DELAY);
-SSD1306_Clear();
-SSD1306_DrawBitmap(0, 0, &chessboard_63x63, 63, 63, SSD1306_COLOR_WHITE);
-SSD1306_UpdateScreen();
-
-
-HAL_Delay (DELAY);
-SSD1306_Clear();
-SSD1306_DrawBitmap(2, 1, &chessboard_57x57, 57, 57, SSD1306_COLOR_WHITE);
-SSD1306_UpdateScreen();
-HAL_Delay (DELAY);
-
-SSD1306_GotoXY(5, 15);
-SSD1306_Clear();
-SSD1306_UpdateScreen();
-HAL_Delay (DELAY);
-
-SSD1306_GotoXY(5, 15);
-SSD1306_Puts("a s d A % @", &artifaktElement_15x18, SSD1306_COLOR_WHITE);
-
-SSD1306_UpdateScreen();
-HAL_Delay (5000);
-
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+//	Vref=adcdmabuff[0];
+	UNUSED(hadc);
+	uADCConversionCpltFlag=1;
+}
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+double Xout, Yout, Zout;
+char buffer[20];  // Bufor do przechowywania tekstu
   while (1)
   {
-	  SSD1306_Clear();
-	  SSD1306_GotoXY(5, 35);
-	  SSD1306_Puts("! 0 # $ % ^ &", &figures1_6x6, SSD1306_COLOR_WHITE);
-	  SSD1306_GotoXY(5, 5);
-	  SSD1306_Puts("0 1 2 3 4 5 6 7", &figures1_6x6, SSD1306_COLOR_WHITE);
+
+	  if (uADCConversionCpltFlag){
+		  for (int var = 0; var < 3; ++var) {
+			  uiADCRawValueBuffer[var]=HAL_ADC_GetValue(&hadc1);
+		}
+	  }
+	  sprintf(buffer, "%d", uiADCRawValueBuffer[0]);
+	  SSD1306_GotoXY(5, 10);
+	  SSD1306_Puts(buffer, &ArialBold_9x10, SSD1306_COLOR_WHITE);
 	  SSD1306_UpdateScreen();
-	  HAL_Delay (5000);
+	  HAL_Delay(200);
+	  sprintf(buffer, "%d", uiADCRawValueBuffer[1]);
+	  SSD1306_GotoXY(5, 30);
+	  SSD1306_Puts(buffer, &ArialBold_9x10, SSD1306_COLOR_WHITE);
+	  SSD1306_UpdateScreen();
+	  HAL_Delay(200);
+	  sprintf(buffer, "%d", uiADCRawValueBuffer[2]);
+	  SSD1306_GotoXY(5, 40);
+	  SSD1306_Puts(buffer, &ArialBold_9x10, SSD1306_COLOR_WHITE);
+	  SSD1306_UpdateScreen();
+	  HAL_Delay(200);
+//	  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adcdmabuff, 1);
+//	  Vref = HAL_ADC_GetValue(&hadc1);
+//
+//
+//	  sprintf(buffer, "%d", adcdmabuff[0]);
+//	  SSD1306_GotoXY(5, 30);
+//	  SSD1306_Puts(buffer, &ArialBold_9x10, SSD1306_COLOR_WHITE);
+//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(200);
+
+//	  HAL_Delay(2000);
+//	  SSD1306_GotoXY(15, 28);
+//	  SSD1306_Puts("\40\41 \42\40\43\40\44     \45 \46", &figures_6x6, SSD1306_COLOR_WHITE);
+//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(2000);
+//
+//	  SSD1306_Clear();
+//	  SSD1306_GotoXY(15, 28);
+//	  SSD1306_Puts("ABC def @#$", &Arial_18x21, SSD1306_COLOR_WHITE);
+//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(2000);
+
+
+//	  deagle();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -200,6 +225,77 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 3;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_VREFINT;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Rank = 3;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
 /**
@@ -266,6 +362,22 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
 }
 

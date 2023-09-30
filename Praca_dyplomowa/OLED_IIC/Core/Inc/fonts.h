@@ -21,7 +21,6 @@
  */
 #ifndef FONTS_H
 #define FONTS_H 120
-//#define FONT16BIT
 
 /* C++ detection */
 #ifdef __cplusplus
@@ -35,9 +34,9 @@ extern C {
  * \par Supported fonts
  *
  * Currently, these fonts are supported:
- *  - 7 x 10 pixels
- *  - 11 x 18 pixels
- *  - 16 x 26 pixels
+ *  - _ x _ pixels
+ *  -
+ *  -
  */
 #include "stm32f4xx_hal.h"
 #include "string.h"
@@ -48,8 +47,6 @@ extern C {
  * @{
  */
 
-//#define FONT16BIT
-
 /**
  * @brief  Font structure used on my LCD libraries
  */
@@ -57,54 +54,36 @@ extern C {
 typedef struct {
 	uint8_t FontWidth;    /*!< Font width in pixels */
 	uint8_t FontHeight;   /*!< Font height in pixels */
-#ifdef FONT16BIT
-	const uint16_t *data; /*!< Pointer to data font data array */
-#else
 	const uint8_t *data; /*!< Pointer to data font data array */
-#endif
+
 } FontDef_t;
 
 /**
  * @brief  String length and height
  */
 typedef struct {
-	uint16_t Length;      /*!< String length in units of pixels */
-	uint16_t Height;      /*!< String height in units of pixels */
+	uint8_t Length;      /*!< String length in units of pixels */
+	uint8_t Height;      /*!< String height in units of pixels */
 } FONTS_SIZE_t;
 
 /**
  * @}
  */
 
-/**
- * @defgroup FONTS_FontVariables
- * @brief    Library font variables
- * @{
- */
-#ifdef FONT16BIT
-/**
- * @brief  7 x 10 pixels font size structure
- */
-extern FontDef_t Font_7x10;
 
-/**
- * @brief  11 x 18 pixels font size structure
- */
-extern FontDef_t Font_11x18;
+extern FontDef_t Arial_8x10;
+extern FontDef_t ArialBold_9x10;
 
-/**
- * @brief  16 x 26 pixels font size structure
- */
-extern FontDef_t Font_16x26;
-#endif
-/**
- * @}
- */
+extern FontDef_t Arial_12x15;
+extern FontDef_t ArialBold_12x15;
 
-extern FontDef_t artifaktElement_15x18;
+extern FontDef_t Arial_14x16;
+extern FontDef_t ArialBold_17x17;
 
-extern FontDef_t figures1_6x6;
+extern FontDef_t Arial_18x21;
+extern FontDef_t ArialBold_18x21;
 
+extern FontDef_t figures_6x6;
 /**
  * @defgroup FONTS_Functions
  * @brief    Library functions
@@ -118,19 +97,8 @@ extern FontDef_t figures1_6x6;
  * @param  *Font: Pointer to @ref FontDef_t font used for calculations
  * @retval Pointer to string used for length and height
  */
+
 char* FONTS_GetStringSize(char* str, FONTS_SIZE_t* SizeStruct, FontDef_t* Font);
-
-/**
- * @}
- */
-
-/**
- * @}
- */
-
-/**
- * @}
- */
 
 /* C++ detection */
 #ifdef __cplusplus
