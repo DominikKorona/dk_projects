@@ -70,20 +70,11 @@ typedef struct {
  * @}
  */
 
-
-extern FontDef_t Arial_8x10;
 extern FontDef_t ArialBold_9x10;
 
-extern FontDef_t Arial_12x15;
-extern FontDef_t ArialBold_12x15;
+extern FontDef_t figures_6x6;
 
 extern FontDef_t Arial_14x16;
-extern FontDef_t ArialBold_17x17;
-
-extern FontDef_t Arial_18x21;
-extern FontDef_t ArialBold_18x21;
-
-extern FontDef_t figures_6x6;
 /**
  * @defgroup FONTS_Functions
  * @brief    Library functions

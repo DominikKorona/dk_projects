@@ -7,6 +7,7 @@
 #include "main.h"
 #include "motor.h"
 
+#define ABS(x)   ((x) > 0 ? (x) : -(x))
 
 void tb6612_init()
 {
@@ -31,9 +32,15 @@ void motor_a_direction(TB6612_Direction dir){
 
 void motor_a_speed(uint8_t speed)
 {
-	if(speed >= 100)
+	motor_a_direction(CCW);
+//	if(speed >= 90)
+//		speed = 89;
+	if(speed < 0){
+		motor_a_direction(CW);
+		ABS(speed);
+	}
+	if(ABS(speed) >= 100)
 		speed = 99;
-
 	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, speed);
 }
 
@@ -50,7 +57,16 @@ void motor_b_direction(TB6612_Direction dir){
 
 void motor_b_speed(uint8_t speed)
 {
-	if(speed >= 100)
+//	if(speed >= 100)
+//		speed = 99;
+	motor_b_direction(CW);
+
+	if(speed < 0){
+		motor_b_direction(CCW);
+		ABS(speed);
+//		speed +=15;
+	}
+	if(ABS(speed) >= 100)
 		speed = 99;
 
 	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_2, speed);
