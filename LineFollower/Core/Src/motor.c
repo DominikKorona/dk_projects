@@ -30,7 +30,7 @@ void motor_a_direction(TB6612_Direction dir){
 	}
 }
 
-void motor_a_speed(uint8_t speed)
+void motor_a_speed(int8_t speed)
 {
 	motor_a_direction(CCW);
 //	if(speed >= 90)
@@ -55,7 +55,7 @@ void motor_b_direction(TB6612_Direction dir){
 	}
 }
 
-void motor_b_speed(uint8_t speed)
+void motor_b_speed(int8_t speed)
 {
 //	if(speed >= 100)
 //		speed = 99;

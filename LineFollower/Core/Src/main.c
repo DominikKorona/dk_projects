@@ -51,7 +51,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 volatile uint16_t Sensor[5];
-uint8_t UartMessage[32];
+char UartMessage[32];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,54 +113,36 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t Kp=16;
-   uint8_t Docelowa=0;
+
+   const uint8_t Docelowa=0;
    uint8_t Aktualna=0;
-   uint8_t Tp=25;
+
    int8_t Error=0;
    int8_t Zmiana;
    uint8_t array[5]={1,1,1,1,1};
-   int8_t wages[5];
+   int8_t wages[5]={-2,-1,0,1,2};
 
-   motor_a_speed(15);
-   motor_b_speed(15);
+//   motor_a_speed(15);
+//   motor_b_speed(15);
 
+   uint8_t Kp=20;
+   uint8_t Tp=30;
   while (1)
   {
-//	  sprintf((char*)UartMessage, "s1:%d s2:%d s3:%d s4:%d s5:%d\n\r",(int)sensors[0],(int)sensors[1],(int)sensors[2],(int)sensors[3],(int)sensors[4]);
-
-
+	  Aktualna = 0; // Ustawianie aktualnej pozycji
 	  LineDetectionFeedback(); // switch led on
-
-//	  if (array[0]){
-//		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-//	  }else
-//	  {
-//		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
-//	  }
-	  wages[0]=-4;
-	  wages[1]=-2;
-	  wages[2]=0;
-	  wages[3]=2;
-	  wages[4]=4;
 
 	  for (uint8_t i = 0; i < 5; ++i) {
 		if (Sensor[i]>THRESHOLD) {
-			array[i]=1;
-		}else
-		{
-			array[i]=0;
-			wages[i]*=0;
+			Aktualna += wages[i]; //Obliczanie rzeczywistej pozycji
 		}
-	}
-	  Aktualna = wages[0]+wages[1]+wages[2]+wages[3]+wages[4];
+	  }
 	  Error = Docelowa + Aktualna;
 	  Zmiana=Kp*Error;
-	  motor_a_speed(Tp+Zmiana);
-	  motor_b_speed(Tp-Zmiana);
+	  motor_a_speed(Tp-Zmiana);
+	  motor_b_speed(Tp+Zmiana);
 
-	  sprintf((char*)UartMessage, "S0: %d, S1: %d, S2: %d, S3: %d, S4: %d Zmiana:%d || Error:%d\n\r", wages[0], wages[1], wages[2], wages[3], wages[4],Zmiana, Error);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)UartMessage, strlen(UartMessage), HAL_MAX_DELAY);
+//	  sprintf((char*)UartMessage, "S0: %d, S1: %d, S2: %d, S3: %d, S4: %d Zmiana:%d || Error:%d\n\r", wages[0], wages[1], wages[2], wages[3], wages[4],Zmiana, Error);
 //	  HAL_UART_Transmit(&huart2, (uint8_t*)UartMessage, strlen(UartMessage), HAL_MAX_DELAY);
 
     /* USER CODE END WHILE */
