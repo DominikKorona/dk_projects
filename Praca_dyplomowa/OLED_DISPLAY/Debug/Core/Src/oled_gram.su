@@ -1,0 +1,5 @@
+../Core/Src/oled_gram.c:9:6:SSD1306_ToggleInvert	16	static
+../Core/Src/oled_gram.c:21:6:SSD1306_Fill	16	static
+../Core/Src/oled_gram.c:26:6:SSD1306_DrawPixel	16	static
+../Core/Src/oled_gram.c:48:6:SSD1306_UpdateScreen	16	static
+../Core/Src/oled_gram.c:61:6:ssd1306_I2C_WriteMulti	296	static

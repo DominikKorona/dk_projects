@@ -93,8 +93,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
-SSD1306_Init();
+  SSD1306_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
