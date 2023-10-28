@@ -124,6 +124,10 @@ int main(void)
 		SSD1306_ToggleInvert();
 		SSD1306_UpdateScreen();
 		HAL_Delay(1000);
+		SSD1306_Fill(SSD1306_COLOR_WHITE);
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+
 		SSD1306_ToggleInvert();
 		SSD1306_UpdateScreen();
 

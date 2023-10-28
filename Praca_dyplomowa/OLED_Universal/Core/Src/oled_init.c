@@ -28,11 +28,6 @@ extern I2C_HandleTypeDef hi2c1;
 #define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
 /* Write data */
 #define SSD1306_WRITEDATA(data)            ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x40, (data))
-/* Absolute value */
-
-
-
-
 
 #define SSD1306_RIGHT_HORIZONTAL_SCROLL              0x26
 #define SSD1306_LEFT_HORIZONTAL_SCROLL               0x27
@@ -87,7 +82,6 @@ void SSD1306_Scrolldiagright(uint8_t start_row, uint8_t end_row)
   SSD1306_WRITECOMMAND (SSD1306_ACTIVATE_SCROLL);
 }
 
-
 void SSD1306_Scrolldiagleft(uint8_t start_row, uint8_t end_row)
 {
   SSD1306_WRITECOMMAND(SSD1306_SET_VERTICAL_SCROLL_AREA);  // sect the area
@@ -103,12 +97,10 @@ void SSD1306_Scrolldiagleft(uint8_t start_row, uint8_t end_row)
   SSD1306_WRITECOMMAND (SSD1306_ACTIVATE_SCROLL);
 }
 
-
 void SSD1306_Stopscroll(void)
 {
 	SSD1306_WRITECOMMAND(SSD1306_DEACTIVATE_SCROLL);
 }
-
 /*--------------------------------------------------------*/
 /*---------------------into-structure---------------------*/
 /*--------------------------------------------------------*/
@@ -227,6 +219,9 @@ void SSD1306_ToggleInvert(void) {
 }
 
 void SSD1306_Fill(SSD1306_COLOR_t color) {
+	if (SSD1306.Inverted) {
+		color = (SSD1306_COLOR_t)!color;
+	}
 	/* Set memory */
 	memset(SSD1306_Buffer, (color == SSD1306_COLOR_BLACK) ? 0x00 : 0xFF, sizeof(SSD1306_Buffer));
 }
@@ -295,12 +290,12 @@ void ssd1306_I2C_Init() {
 }
 
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
-uint8_t dt[256];
-dt[0] = reg;
-uint8_t i;
-for(i = 0; i < count; i++)
-dt[i+1] = data[i];
-HAL_I2C_Master_Transmit(&hi2c1, address, dt, count+1, 10);
+	uint8_t dt[256];
+	dt[0] = reg;
+	uint8_t i;
+	for(i = 0; i < count; i++)
+		dt[i+1] = data[i];
+		HAL_I2C_Master_Transmit(&hi2c1, address, dt, count+1, 10);
 }
 
 
@@ -310,3 +305,23 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 	dt[1] = data;
 	HAL_I2C_Master_Transmit(&hi2c1, address, dt, 2, 10);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  _____ ___   _____
+// |_   _|__ \ / ____|
+//   | |    ) | |
+//   | |   / /| |
+//  _| |_ / /_| |____
+// |_____|____|\_____|
+//
+
+//  ___
+// |__
+//	  )
+// 	 /
+//
+//
+//
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
