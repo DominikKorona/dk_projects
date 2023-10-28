@@ -1,6 +1,7 @@
 "./Core/Src/main.o"
 "./Core/Src/oled_fonts.o"
 "./Core/Src/oled_functions.o"
+"./Core/Src/oled_gram.o"
 "./Core/Src/oled_init.o"
 "./Core/Src/stm32f4xx_hal_msp.o"
 "./Core/Src/stm32f4xx_it.o"

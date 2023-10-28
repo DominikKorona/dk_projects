@@ -103,7 +103,12 @@ int main(void)
 		SSD1306_Clear();
 		HAL_Delay(1000);
 		SSD1306_SetXY(15, 5);
-		SSD1306_Puts ("SCOREbith", &Font_11x18, 1);
+		SSD1306_Puts ("test", &Font_11x18, 1);SSD1306_SetXY(15, 5);
+		SSD1306_UpdateScreen();
+		HAL_Delay(500);
+		SSD1306_Clear();
+		SSD1306_SetXY(15, 5);
+		SSD1306_Puts ("! @ # $ % ^ & * (", &Font_11x18, 1);SSD1306_SetXY(15, 5);
 		SSD1306_UpdateScreen();
 		HAL_Delay(1000);
 		SSD1306_ToggleInvert();
@@ -127,9 +132,6 @@ int main(void)
 		SSD1306_Fill(SSD1306_COLOR_WHITE);
 		SSD1306_UpdateScreen();
 		HAL_Delay(1000);
-
-		SSD1306_ToggleInvert();
-		SSD1306_UpdateScreen();
 
     /* USER CODE END WHILE */
 
