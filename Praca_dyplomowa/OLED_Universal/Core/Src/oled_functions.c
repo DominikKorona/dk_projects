@@ -27,6 +27,8 @@
    ----------------------------------------------------------------------
  */
 #include "oled_functions.h"
+#define ABS(x)   ((x) > 0 ? (x) : -(x))
+
 
 void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color)
 {
@@ -52,41 +54,39 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
 }
 
 
-void SSD1306_GotoXY(uint16_t x, uint16_t y) {
-	/* Set write pointers */
-//	SSD1306.CurrentX = x;
-//	SSD1306.CurrentY = y;
-}
-
 char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
-//	uint32_t i, b, j;
-//
-//	/* Check available space in LCD */
-//	if (
-//		SSD1306_WIDTH <= (SSD1306.CurrentX + Font->FontWidth) ||
-//		SSD1306_HEIGHT <= (SSD1306.CurrentY + Font->FontHeight)
-//	) {
-//		/* Error */
-//		return 0;
-//	}
-//
-//	/* Go through font */
-//	for (i = 0; i < Font->FontHeight; i++) {
-//		b = Font->data[(ch - 32) * Font->FontHeight + i];
-//		for (j = 0; j < Font->FontWidth; j++) {
-//			if ((b << j) & 0x8000) {
-//				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
-//			} else {
-//				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
-//			}
-//		}
-//	}
-//
-//	/* Increase pointer */
-//	SSD1306.CurrentX += Font->FontWidth;
-//
-//	/* Return character written */
-//	return ch;
+	uint16_t i, b, j;
+	uint16_t x, y;
+	/*Get Values X and Y*/
+	SSD1306_GetXY(&x, &y);
+
+
+	/* Check available space in LCD */
+	if (
+		SSD1306_WIDTH <= (x + Font->FontWidth) ||
+		SSD1306_HEIGHT <= (y + Font->FontHeight)
+	) {
+		/* Error */
+		return 0;
+	}
+
+	/* Go through font */
+	for (i = 0; i < Font->FontHeight; i++) {
+		b = Font->data[(ch - 32) * Font->FontHeight + i];
+		for (j = 0; j < Font->FontWidth; j++) {
+			if ((b << j) & 0x8000) {
+				SSD1306_DrawPixel(x + j, (y + i), (SSD1306_COLOR_t) color);
+			} else {
+				SSD1306_DrawPixel(x + j, (y + i), (SSD1306_COLOR_t)!color);
+			}
+		}
+	}
+
+	/* Increase pointer */
+	x += Font->FontWidth;
+	SSD1306_SetXY(x, y);
+	/* Return character written */
+	return ch;
 }
 
 char SSD1306_Puts(char* str, FontDef_t* Font, SSD1306_COLOR_t color) {

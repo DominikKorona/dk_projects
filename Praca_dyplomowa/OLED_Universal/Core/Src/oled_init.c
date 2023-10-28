@@ -29,8 +29,6 @@ extern I2C_HandleTypeDef hi2c1;
 /* Write data */
 #define SSD1306_WRITEDATA(data)            ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x40, (data))
 /* Absolute value */
-#define ABS(x)   ((x) > 0 ? (x) : -(x))
-
 
 
 
@@ -111,7 +109,23 @@ void SSD1306_Stopscroll(void)
 	SSD1306_WRITECOMMAND(SSD1306_DEACTIVATE_SCROLL);
 }
 
+/*--------------------------------------------------------*/
+/*---------------------into-structure---------------------*/
+/*--------------------------------------------------------*/
+void SSD1306_SetXY(uint16_t x, uint16_t y) {
+	/* Set write pointers */
+	SSD1306.CurrentX = x;
+	SSD1306.CurrentY = y;
+}
 
+void SSD1306_GetXY(uint16_t* x, uint16_t* y) {
+    /* Read current x and y */
+    *x = SSD1306.CurrentX;
+    *y = SSD1306.CurrentY;
+}
+/*--------------------------------------------------------*/
+/*--------------------------------------------------------*/
+/*--------------------------------------------------------*/
 
 void SSD1306_InvertDisplay (int i)
 {
@@ -120,9 +134,6 @@ void SSD1306_InvertDisplay (int i)
   else SSD1306_WRITECOMMAND (SSD1306_NORMALDISPLAY);
 
 }
-
-
-
 
 uint8_t SSD1306_Init(void) {
 

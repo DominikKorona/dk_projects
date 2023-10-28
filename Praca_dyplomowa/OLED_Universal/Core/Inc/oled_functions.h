@@ -62,8 +62,6 @@ SDA        |PB7          |Serial data line
 
 #include "string.h"
 
-
-void SSD1306_GotoXY(uint16_t x, uint16_t y);
 char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color);
 char SSD1306_Puts(char* str, FontDef_t* Font, SSD1306_COLOR_t color);
 void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD1306_COLOR_t c);

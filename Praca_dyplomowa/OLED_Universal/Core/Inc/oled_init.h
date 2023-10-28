@@ -8,12 +8,6 @@
 #ifndef INC_OLED_INIT_H_
 #define INC_OLED_INIT_H_
 
-
-
-
-
-
-
 /* I2C address */
 #ifndef SSD1306_I2C_ADDR
 #define SSD1306_I2C_ADDR         0x78
@@ -53,8 +47,6 @@ void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color);
 
 
 
-#endif /* INC_OLED_INIT_H_ */
-
 #ifndef ssd1306_I2C_TIMEOUT
 #define ssd1306_I2C_TIMEOUT					20000
 #endif
@@ -89,40 +81,30 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data);
  */
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t *data, uint16_t count);
 
-/**
- * @brief  Draws the Bitmap
- * @param  X:  X location to start the Drawing
- * @param  Y:  Y location to start the Drawing
- * @param  *bitmap : Pointer to the bitmap
- * @param  W : width of the image
- * @param  H : Height of the image
- * @param  color : 1-> white/blue, 0-> black
- */
 void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color);
 
-// scroll the screen for fixed rows
-
 void SSD1306_ScrollRight(uint8_t start_row, uint8_t end_row);
-
-
 void SSD1306_ScrollLeft(uint8_t start_row, uint8_t end_row);
-
-
 void SSD1306_Scrolldiagright(uint8_t start_row, uint8_t end_row);
-
-
 void SSD1306_Scrolldiagleft(uint8_t start_row, uint8_t end_row);
-
-
 
 void SSD1306_Stopscroll(void);
 
 
 // inverts the display i = 1->inverted, i = 0->normal
-
 void SSD1306_InvertDisplay (int i);
 
 
 // clear the display
 
 void SSD1306_Clear (void);
+
+
+
+
+void SSD1306_SetXY(uint16_t x, uint16_t y);
+void SSD1306_GetXY(uint16_t* x, uint16_t* y);
+
+
+
+#endif /* INC_OLED_INIT_H_ */

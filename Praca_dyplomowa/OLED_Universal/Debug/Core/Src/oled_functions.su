@@ -1,6 +1,5 @@
-../Core/Src/oled_functions.c:31:6:SSD1306_DrawBitmap	32	static
-../Core/Src/oled_functions.c:55:6:SSD1306_GotoXY	16	static
-../Core/Src/oled_functions.c:61:6:SSD1306_Putc	16	static
+../Core/Src/oled_functions.c:33:6:SSD1306_DrawBitmap	32	static
+../Core/Src/oled_functions.c:57:6:SSD1306_Putc	32	static
 ../Core/Src/oled_functions.c:92:6:SSD1306_Puts	24	static
 ../Core/Src/oled_functions.c:110:6:SSD1306_DrawLine	40	static
 ../Core/Src/oled_functions.c:194:6:SSD1306_DrawRectangle	32	static

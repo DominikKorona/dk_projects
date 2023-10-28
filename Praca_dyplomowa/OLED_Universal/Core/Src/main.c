@@ -102,7 +102,7 @@ int main(void)
   {
 		SSD1306_Clear();
 		HAL_Delay(1000);
-		SSD1306_GotoXY (35,0);
+		SSD1306_SetXY(15, 5);
 		SSD1306_Puts ("SCOREbith", &Font_11x18, 1);
 		SSD1306_UpdateScreen();
 		HAL_Delay(1000);
@@ -113,6 +113,12 @@ int main(void)
 		SSD1306_UpdateScreen();
 		SSD1306_DrawCircle(64, 32, 10, SSD1306_COLOR_WHITE);
 		HAL_Delay(1000);
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+		SSD1306_DrawFilledCircle(64, 32, 5, SSD1306_COLOR_WHITE);
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+		SSD1306_DrawLine(5, 32, 115, 32, SSD1306_COLOR_WHITE);
 		SSD1306_UpdateScreen();
 		HAL_Delay(1000);
 		SSD1306_ToggleInvert();
