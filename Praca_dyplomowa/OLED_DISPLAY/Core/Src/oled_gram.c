@@ -1,11 +1,34 @@
-
 #include "oled_gram.h"
-#include "oled_Interface.h"
+
+/* Private SSD1306 structure */
+typedef struct {
+	uint8_t CurrentX;
+	uint8_t CurrentY;
+	uint8_t Inverted;
+	uint8_t Initialized;
+} SSD1306_t;
+
+/* Private variable */
+static SSD1306_t SSD1306;
 
 /* SSD1306 data buffer */
-//static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
-//uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
-uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+
+
+void SSD1306_UpdateScreen(void) {
+	uint8_t m;
+
+	for (m = 0; m < 8; m++) {
+		SSD1306_WRITECOMMAND(0xB0 + m);
+		SSD1306_WRITECOMMAND(0x00);
+		SSD1306_WRITECOMMAND(0x10);
+
+		/* Write multi data */
+		ssd1306_I2C_WriteMulti(SSD1306_I2C_ADDR, 0x40, &SSD1306_Buffer[SSD1306_WIDTH * m], SSD1306_WIDTH);
+	}
+}
+
+
 void SSD1306_ToggleInvert(void) {
 	uint8_t i;
 
@@ -45,18 +68,24 @@ void SSD1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR_t color) {
 	}
 }
 
-void SSD1306_UpdateScreen(void) {
-	uint8_t m;
+void SSD1306_InitStructure(void){
 
-	for (m = 0; m < 8; m++) {
-		SSD1306_WRITECOMMAND(0xB0 + m);
-		SSD1306_WRITECOMMAND(0x00);
-		SSD1306_WRITECOMMAND(0x10);
+	/* Clear screen */
+	SSD1306_Fill(SSD1306_COLOR_BLACK);
 
-		/* Write multi data */
-		ssd1306_I2C_WriteMulti(SSD1306_I2C_ADDR, 0x40, &SSD1306_Buffer[SSD1306_WIDTH * m], SSD1306_WIDTH);
-	}
+	/* Update screen */
+	SSD1306_UpdateScreen();
+
+	/* Set default values */
+	SSD1306.CurrentX = 0;
+	SSD1306.CurrentY = 0;
+
+	/* Initialized OK */
+	SSD1306.Initialized = 1;
+
+	SSD1306.Inverted = 0;
 }
+
 
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
 	uint8_t dt[256];

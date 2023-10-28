@@ -21,9 +21,10 @@
    ----------------------------------------------------------------------
  */
 #include "oled_Functions.h"
-#include "oled_Interface.h"
-
 #define ABS(x)   ((x) > 0 ? (x) : -(x))
+
+//static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+
 
 void SSD1306_DrawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8_t w, uint8_t h, uint8_t color)
 {
@@ -52,45 +53,45 @@ void SSD1306_DrawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8
 
 void SSD1306_GotoXY(uint8_t x, uint8_t y) {
 	/* Set write pointers */
-	SSD1306.CurrentX = x;
-	SSD1306.CurrentY = y;
+//	SSD1306.CurrentX = x;
+//	SSD1306.CurrentY = y;
 }
 
 char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
 	uint8_t x, y, byte, byteWidth, rowWidthBytes;
 	/* Check available space in LCD */
-	if (
-		SSD1306_WIDTH <= (SSD1306.CurrentX + Font->FontWidth) ||
-		SSD1306_HEIGHT <= (SSD1306.CurrentY + Font->FontHeight)
-	) {
-		/* Error */
-		return 0;
-	}
-
-    byte = 0;
-    byteWidth = (Font->FontWidth + 7) / 8;
-    rowWidthBytes = Font->FontHeight * byteWidth;
-	/* Go through font */
-    for (y = 0; y < Font->FontHeight; y++) {
-            for (x = 0; x < Font->FontWidth; x++) {
-                if(x & 7)
-                {
-                    byte <<= 1;
-                }else /* gdy i==0 to pobieram zerowy element z tablicy,
-                       * i==8,==16 itd. to pobieram sasiedni element**/
-                {
-                    byte = Font->data[(ch - 32) * rowWidthBytes + y * byteWidth + x / 8];
-                }
-
-                if (byte & 0x80){
-					SSD1306_DrawPixel(SSD1306.CurrentX + x, (SSD1306.CurrentY + y), (SSD1306_COLOR_t) color);
-                } else {
-					SSD1306_DrawPixel(SSD1306.CurrentX + x, (SSD1306.CurrentY + y), (SSD1306_COLOR_t)!color);
-                }
-            }
-        }
-	/* Increase pointer */
-	SSD1306.CurrentX += Font->FontWidth;
+//	if (
+//		SSD1306_WIDTH <= (SSD1306.CurrentX + Font->FontWidth) ||
+//		SSD1306_HEIGHT <= (SSD1306.CurrentY + Font->FontHeight)
+//	) {
+//		/* Error */
+//		return 0;
+//	}
+//
+//    byte = 0;
+//    byteWidth = (Font->FontWidth + 7) / 8;
+//    rowWidthBytes = Font->FontHeight * byteWidth;
+//	/* Go through font */
+//    for (y = 0; y < Font->FontHeight; y++) {
+//            for (x = 0; x < Font->FontWidth; x++) {
+//                if(x & 7)
+//                {
+//                    byte <<= 1;
+//                }else /* gdy i==0 to pobieram zerowy element z tablicy,
+//                       * i==8,==16 itd. to pobieram sasiedni element**/
+//                {
+//                    byte = Font->data[(ch - 32) * rowWidthBytes + y * byteWidth + x / 8];
+//                }
+//
+//                if (byte & 0x80){
+//					SSD1306_DrawPixel(SSD1306.CurrentX + x, (SSD1306.CurrentY + y), (SSD1306_COLOR_t) color);
+//                } else {
+//					SSD1306_DrawPixel(SSD1306.CurrentX + x, (SSD1306.CurrentY + y), (SSD1306_COLOR_t)!color);
+//                }
+//            }
+//        }
+//	/* Increase pointer */
+//	SSD1306.CurrentX += Font->FontWidth;
 
 	/* Return character written */
 	return ch;

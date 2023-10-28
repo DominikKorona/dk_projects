@@ -2,9 +2,6 @@
 #define INC_OLED_FUNCTIONS_H_
 
 
-
-
-
 /* C++ detection */
 #ifdef __cplusplus
 extern C {
@@ -26,15 +23,11 @@ GND        |GND          |
 SCL        |PB6          |Serial clock line
 SDA        |PB7          |Serial data line
  */
-
-#include "stm32f4xx_hal.h"
-
-#include "oled_gram.h"
+#include "oled_Interface.h"
 #include "fonts.h"
-#include "stdlib.h"
 #include "string.h"
 
-
+void SSD1306_DrawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8_t w, uint8_t h, uint8_t color);
 void SSD1306_GotoXY(uint8_t x, uint8_t y);
 char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color);
 char SSD1306_Puts(char* str, FontDef_t* Font, SSD1306_COLOR_t color);

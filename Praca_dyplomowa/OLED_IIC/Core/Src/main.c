@@ -105,12 +105,12 @@ int main(void)
 	  SSD1306_Clear();
 	  SSD1306_DrawBitmap(5, 5, (const unsigned char*)jack_84x58, 84, 58, SSD1306_COLOR_WHITE);
 	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
+	  HAL_Delay(2000);
 
 	  SSD1306_Clear();
 	  SSD1306_DrawBitmap(5, 5, (const unsigned char*)agh_24x44, 24, 44, SSD1306_COLOR_BLACK);
 	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
+	  HAL_Delay(2000);
 
 	  SSD1306_Clear();
 	  SSD1306_GotoXY(5, 10);
@@ -118,7 +118,7 @@ int main(void)
 	  SSD1306_GotoXY(5, 30);
 	  SSD1306_Puts("! \41 \42 \43 \44 \45 \46", &figures_6x6, SSD1306_COLOR_WHITE);
 	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
+	  HAL_Delay(2000);
 
 
     /* USER CODE END WHILE */

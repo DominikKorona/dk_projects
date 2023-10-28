@@ -29,20 +29,9 @@
 extern C {
 #endif
 
-#include "oled_Functions.h"
-
-//#include "fonts.h"
-
-//#include "stdlib.h"
-
-	/* Private SSD1306 structure */
-	typedef struct {
-		uint8_t CurrentX;
-		uint8_t CurrentY;
-		uint8_t Inverted;
-		uint8_t Initialized;
-	} SSD1306_t;
-	extern SSD1306_t SSD1306;
+#include "stdlib.h"
+#include "stm32f4xx_hal.h"
+#include "oled_gram.h"
 
 uint8_t SSD1306_Init(void);
 

@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "fonts.h"
 #include "bitmaps.h"
-#include "oled_Interface.h"
+#include "oled_Functions.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -80,7 +80,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  SSD1306_Init();
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -95,37 +95,54 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+  SSD1306_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  SSD1306_Clear();
-	  SSD1306_DrawBitmap(5, 5, (const unsigned char*)jack_84x58, 84, 58, SSD1306_COLOR_WHITE);
-	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
+		SSD1306_Clear();
+		HAL_Delay(1000);
+		SSD1306_GotoXY (35,0);
+		SSD1306_Puts ("SCORE !@#$", &ArialBold_9x10, 1);
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+		SSD1306_ToggleInvert();
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+		SSD1306_ToggleInvert();
+		SSD1306_UpdateScreen();
+		SSD1306_DrawCircle(64, 32, 10, SSD1306_COLOR_WHITE);
+		HAL_Delay(1000);
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+		SSD1306_ToggleInvert();
+		SSD1306_UpdateScreen();
+		HAL_Delay(1000);
+		SSD1306_ToggleInvert();
+		SSD1306_UpdateScreen();
 
-	  SSD1306_Clear();
-	  SSD1306_DrawBitmap(5, 5, (const unsigned char*)agh_24x44, 24, 44, SSD1306_COLOR_BLACK);
-	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
-
-	  SSD1306_Clear();
-	  SSD1306_GotoXY(5, 10);
-	  SSD1306_Puts("abcd !@# fGHIJ <>", &ArialBold_9x10, SSD1306_COLOR_WHITE);
-	  SSD1306_GotoXY(5, 30);
-	  SSD1306_Puts("! \41 \42 \43 \44 \45 \46", &figures_6x6, SSD1306_COLOR_WHITE);
-	  SSD1306_GotoXY(5, 50);
-	  SSD1306_Puts("! \41 \42 \43 \44 \45 \46", &figures_6x6, SSD1306_COLOR_WHITE);
-	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
-
-	  SSD1306_Clear();
-	  SSD1306_DrawBitmap(1, 1, (const unsigned char*)chessboard_63x63, 63, 63, SSD1306_COLOR_BLACK);
-	  SSD1306_UpdateScreen();
-	  HAL_Delay(5000);
+//
+//	  SSD1306_Clear();
+//	  SSD1306_DrawBitmap(5, 5, (const unsigned char*)agh_24x44, 24, 44, SSD1306_COLOR_BLACK);
+//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(5000);
+//
+//	  SSD1306_Clear();
+//	  SSD1306_GotoXY(5, 10);
+//	  SSD1306_Puts("abcd !@# fGHIJ <>", &ArialBold_9x10, SSD1306_COLOR_WHITE);
+//	  SSD1306_GotoXY(5, 30);
+//	  SSD1306_Puts("! \41 \42 \43 \44 \45 \46", &figures_6x6, SSD1306_COLOR_WHITE);
+//	  SSD1306_GotoXY(5, 50);
+//	  SSD1306_Puts("! \41 \42 \43 \44 \45 \46", &figures_6x6, SSD1306_COLOR_WHITE);
+//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(5000);
+//
+//	  SSD1306_Clear();
+//	  SSD1306_DrawBitmap(1, 1, (const unsigned char*)chessboard_63x63, 63, 63, SSD1306_COLOR_BLACK);
+//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(5000);
 
 	/* USER CODE END WHILE */
 

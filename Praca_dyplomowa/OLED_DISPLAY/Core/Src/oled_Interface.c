@@ -1,6 +1,4 @@
 #include "oled_Interface.h"
-#include "oled_gram.h"
-#include "oled_Functions.h"
 
 #define SSD1306_RIGHT_HORIZONTAL_SCROLL              0x26
 #define SSD1306_LEFT_HORIZONTAL_SCROLL               0x27
@@ -12,7 +10,6 @@
 
 #define SSD1306_NORMALDISPLAY       0xA6
 #define SSD1306_INVERTDISPLAY       0xA7
-SSD1306_t SSD1306;
 
 uint8_t SSD1306_Init(void) {
 
@@ -63,19 +60,7 @@ uint8_t SSD1306_Init(void) {
 
 	SSD1306_WRITECOMMAND(SSD1306_DEACTIVATE_SCROLL);
 
-	/* Clear screen */
-	SSD1306_Fill(SSD1306_COLOR_BLACK);
-
-	/* Update screen */
-	SSD1306_UpdateScreen();
-
-	/* Set default values */
-	SSD1306.CurrentX = 0;
-	SSD1306.CurrentY = 0;
-
-	/* Initialized OK */
-	SSD1306.Initialized = 1;
-
+	SSD1306_InitStructure();
 	/* Return OK */
 	return 1;
 }

@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := OLED
+BUILD_ARTIFACT_NAME := OLED1
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-OLED.elf \
+OLED1.elf \
 
 MAP_FILES += \
-OLED.map \
+OLED1.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-OLED.list \
+OLED1.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: OLED.elf secondary-outputs
+main-build: OLED1.elf secondary-outputs
 
 # Tool invocations
-OLED.elf OLED.map: $(OBJS) $(USER_OBJS) C:\Users\domko\OneDrive\Dokumenty\GitHub\dk_projects\Praca_dyplomowa\OLED_DISPLAY\STM32F411RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "OLED.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\domko\OneDrive\Dokumenty\GitHub\dk_projects\Praca_dyplomowa\OLED_DISPLAY\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="OLED.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+OLED1.elf OLED1.map: $(OBJS) $(USER_OBJS) C:\Users\domko\OneDrive\Dokumenty\GitHub\dk_projects\Praca_dyplomowa\OLED_DISPLAY\STM32F411RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "OLED1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\domko\OneDrive\Dokumenty\GitHub\dk_projects\Praca_dyplomowa\OLED_DISPLAY\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="OLED1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-OLED.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "OLED.list"
+OLED1.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "OLED1.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) OLED.elf OLED.list OLED.map default.size.stdout
+	-$(RM) OLED1.elf OLED1.list OLED1.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
