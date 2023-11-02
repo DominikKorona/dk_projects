@@ -1,16 +1,9 @@
-/*
- * oled_gram.h
- *
- *  Created on: 28 Oct 2023
- *      Author: domko
- */
 
 #ifndef INC_OLED_GRAM_H_
 #define INC_OLED_GRAM_H_
 
 #include "stm32f4xx_hal.h"
 #include "stdlib.h"
-
 
 /* I2C address */
 #ifndef SSD1306_I2C_ADDR

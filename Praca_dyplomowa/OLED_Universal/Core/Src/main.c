@@ -100,39 +100,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		SSD1306_Clear();
-		HAL_Delay(1000);
-		SSD1306_SetXY(15, 5);
-		SSD1306_Puts ("test", &Font_11x18, 1);SSD1306_SetXY(15, 5);
-		SSD1306_UpdateScreen();
-		HAL_Delay(500);
-		SSD1306_Clear();
-		SSD1306_SetXY(15, 5);
-		SSD1306_Puts ("! @ # $ % ^ & * (", &Font_11x18, 1);SSD1306_SetXY(15, 5);
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-		SSD1306_ToggleInvert();
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-		SSD1306_ToggleInvert();
-		SSD1306_UpdateScreen();
-		SSD1306_DrawCircle(64, 32, 10, SSD1306_COLOR_WHITE);
-		HAL_Delay(1000);
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-		SSD1306_DrawFilledCircle(64, 32, 5, SSD1306_COLOR_WHITE);
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-		SSD1306_DrawLine(5, 32, 115, 32, SSD1306_COLOR_WHITE);
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-		SSD1306_ToggleInvert();
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-		SSD1306_Fill(SSD1306_COLOR_WHITE);
-		SSD1306_UpdateScreen();
-		HAL_Delay(1000);
-
+	  SSD1306_SetXY(2, 2);
+	  SSD1306_Puts("Desert Eagle", &Font_7x10, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawLine(2, 14, 128, 14, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawCircle(95, 6, 4, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawRectangle(102, 2, 20, 8, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawTriangle(5, 55, 35, 55, 20, 35, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawFilledTriangle(15, 50, 25, 50, 20, 40, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawBitmap(55, 25, (const unsigned char*)deagle_56x36, 56, 36, SSD1306_COLOR_WHITE);
+	  SSD1306_UpdateScreen();
+	  HAL_Delay(4000);
+	  SSD1306_ToggleInvert();
+	  SSD1306_UpdateScreen();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

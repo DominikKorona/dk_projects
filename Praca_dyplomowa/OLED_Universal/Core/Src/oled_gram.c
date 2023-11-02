@@ -18,8 +18,6 @@ typedef struct {
 /* Private variable */
 static SSD1306_t SSD1306;
 
-extern I2C_HandleTypeDef hi2c1;
-
 void SSD1306_SetXY(uint16_t x, uint16_t y) {
 	/* Set write pointers */
 	SSD1306.CurrentX = x;
@@ -31,6 +29,7 @@ void SSD1306_GetXY(uint16_t* x, uint16_t* y) {
     *x = SSD1306.CurrentX;
     *y = SSD1306.CurrentY;
 }
+
 void SSD1306_GetBufor(uint8_t *buf) {
     memcpy(buf, SSD1306_Buffer, sizeof(SSD1306_Buffer));
 }

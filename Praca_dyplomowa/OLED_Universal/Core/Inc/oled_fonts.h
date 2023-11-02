@@ -1,9 +1,3 @@
-/*
- * oled_fonts.h
- *
- *  Created on: Oct 28, 2023
- *      Author: domko
- */
 
 #ifndef INC_OLED_FONTS_H_
 #define INC_OLED_FONTS_H_
@@ -76,15 +70,6 @@ typedef struct {
 	uint16_t Height;      /*!< String height in units of pixels */
 } FONTS_SIZE_t;
 
-/**
- * @}
- */
-
-/**
- * @defgroup FONTS_FontVariables
- * @brief    Library font variables
- * @{
- */
 
 /**
  * @brief  7 x 10 pixels font size structure
@@ -101,9 +86,9 @@ extern FontDef_t Font_11x18;
  */
 extern FontDef_t Font_16x26;
 
-/**
- * @}
- */
+
+extern const uint8_t deagle_56x36[];
+extern const uint8_t jack_84x58[];
 
 /**
  * @defgroup FONTS_Functions
