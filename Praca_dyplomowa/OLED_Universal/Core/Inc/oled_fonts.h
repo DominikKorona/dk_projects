@@ -57,9 +57,9 @@ extern C {
  * @brief  Font structure used on my LCD libraries
  */
 typedef struct {
-	uint8_t FontWidth;    /*!< Font width in pixels */
-	uint8_t FontHeight;   /*!< Font height in pixels */
-	const uint16_t *data; /*!< Pointer to data font data array */
+	uint16_t FontWidth;    /*!< Font width in pixels */
+	uint16_t FontHeight;   /*!< Font height in pixels */
+	const uint8_t *data; /*!< Pointer to data font data array */
 } FontDef_t;
 
 /**
@@ -86,6 +86,10 @@ extern FontDef_t Font_11x18;
  */
 extern FontDef_t Font_16x26;
 
+extern FontDef_t Arial_14x16;
+extern FontDef_t Arial8_8x10;
+extern FontDef_t Font_16x14;
+extern FontDef_t Arial_new_7x10;
 
 extern const uint8_t deagle_56x36[];
 extern const uint8_t jack_84x58[];

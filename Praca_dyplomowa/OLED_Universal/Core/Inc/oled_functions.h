@@ -56,7 +56,6 @@
 	void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color);
 	char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color);
 	char SSD1306_Puts(char* str, FontDef_t* Font, SSD1306_COLOR_t color);
-
 	void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD1306_COLOR_t c);
 	void SSD1306_DrawRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c);
 	void SSD1306_DrawFilledRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c);

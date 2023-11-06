@@ -1,17 +1,39 @@
-/*
- * oled_init.c
- *
- *  Created on: Oct 28, 2023
- *      Author: domko
- */
+
 #include "oled_init.h"
+#include "stm32f4xx_hal.h"
 
 /* Write command */
 #define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
+//#define SH1106_WRITECOMMAND(command)
 /* Write data */
 #define SSD1306_WRITEDATA(data)            ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x40, (data))
 /**/
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// SH1106
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GPIO peripherals
+#define SH1106_GPIO_PERIPH   (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN | RCC_AHBENR_GPIOCEN)
+// SH1106 CS (Chip Select) pin (PB4)
+#define CS_GPIO_Port 	GPIOB
+#define CS_PIN			GPIO_PIN_4
+#define SH1106_CS_H()	HAL_GPIO_WritePin(CS_GPIO_Port, CS_PIN, GPIO_PIN_SET)
+#define SH1106_CS_L()	HAL_GPIO_WritePin(CS_GPIO_Port, CS_PIN, GPIO_PIN_RESET)
+
+// SH1106 RS/A0 (Data/Command select) pin (PA7)
+#define DC_GPIO_Port	GPIOA
+#define DC_PIN			GPIO_PIN_7
+#define SH1106_DC_H()	HAL_GPIO_WritePin(DC_GPIO_Port, DC_PIN, GPIO_PIN_SET)
+#define SH1106_DC_L()	HAL_GPIO_WritePin(DC_GPIO_Port, DC_PIN, GPIO_PIN_RESET)
+
+// SH1106 RST (Reset) pin (PC9)
+#define RES_GPIO_Port	GPIOC
+#define RES_PIN			GPIO_PIN_9
+#define SH1106_RST_H()	HAL_GPIO_WritePin(RES_GPIO_Port, RES_PIN, GPIO_PIN_SET)
+#define SH1106_RST_L()	HAL_GPIO_WritePin(RES_GPIO_Port, RES_PIN, GPIO_PIN_RESET)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // SSD1306
@@ -29,6 +51,7 @@
 #define SSD1306_INVERTDISPLAY       0xA7
 
 extern I2C_HandleTypeDef hi2c1;
+extern SPI_HandleTypeDef hspi2;
 
 uint8_t SSD1306_Init(void) {
 
@@ -59,7 +82,7 @@ uint8_t SSD1306_Init(void) {
 	SSD1306_WRITECOMMAND(0xA1); //--set segment re-map 0 to 127
 	SSD1306_WRITECOMMAND(0xA6); //--set normal display
 	SSD1306_WRITECOMMAND(0xA8); //--set multiplex ratio(1 to 64)
-	SSD1306_WRITECOMMAND(0x3F); //
+	SSD1306_WRITECOMMAND(0x3F); //1/64 duty
 	SSD1306_WRITECOMMAND(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
 	SSD1306_WRITECOMMAND(0xD3); //-set display offset
 	SSD1306_WRITECOMMAND(0x00); //-not offset
@@ -236,4 +259,39 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 // SPI
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+void SH1106_Init(void){
+	/* Init SPI */
+
+	/* Check if LCD connected to I2C */
+//	if (HAL_I2C_IsDeviceReady(&hi2c1, SSD1306_I2C_ADDR, 1, 20000) != HAL_OK) {
+//		/* Return false */
+//		return 0;
+//	}
+	/* A little delay */
+}
+
+void sh1106_SPI_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count){
+//	HAL_GPIO_WritePin(CS_GPIO_Port, CS_PIN, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(DC_GPIO_Port, DC_PIN, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(CS_GPIO_Port, CS_PIN, GPIO_PIN_RESET);
+////	HAL_SPI_Transmit(&hspi2, pData, Size, Timeout);
+//	HAL_GPIO_WritePin(CS_GPIO_Port, CS_PIN, GPIO_PIN_SET);
+}
+
+void sh1106_SPI_Write(uint8_t address, uint8_t reg, uint8_t data){
+	SH1106_DC_L();
+
+	SH1106_CS_H();
+	SH1106_DC_H();
+	SH1106_CS_L();
+	HAL_SPI_Transmit(&hspi2, &data, 1, 20);
+
+//	 CS=1;
+//	 DC=0; //DC=0 przesłanie komendy
+//	 CS=0;
+//	 WriteSpi(cmd); //zapisanie kodu komendy
+//	 CS=1;
+//	HAL_SPI_Transmit(&hspi2, &data, Size, 10);
+//	HAL_I2C_Master_Transmit(&hi2c1, address, &data, Size, Timeout)
+}
 
