@@ -90,6 +90,7 @@ extern FontDef_t Arial_14x16;
 extern FontDef_t Arial8_8x10;
 extern FontDef_t Font_16x14;
 extern FontDef_t Arial_new_7x10;
+extern FontDef_t ArialBig_20x23;
 
 extern const uint8_t deagle_56x36[];
 extern const uint8_t jack_84x58[];

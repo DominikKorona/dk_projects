@@ -48,39 +48,24 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
 }
 
 
-char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
-	uint16_t i, j;
-	uint16_t x, y, byte, byteWidth, rowWidthBytes;
-	/*Get Values X and Y*/
-	SSD1306_GetXY(&x, &y);
+char SSD1306_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
 
-	/* Check available space in LCD */
+	uint8_t i, j;
+	uint8_t byte, byteWidth, rowWidthBytes;
 	if (
-		SSD1306_WIDTH <= (x + Font->FontWidth) ||
-		SSD1306_HEIGHT <= (y + Font->FontHeight)
+		SSD1306_WIDTH <= (chXpos + Font->FontWidth) ||
+		SSD1306_HEIGHT <= (chYpos + Font->FontHeight)
 	) {
 		/* Error */
 		return 0;
 	}
-
-//	/* Go through font */
-//	for (i = 0; i < Font->FontHeight; i++) {
-//		b = Font->data[(ch - 32) * Font->FontHeight + i];
-//		for (j = 0; j < Font->FontWidth; j++) {
-//			if ((b << j) & 0x8000) {
-//				SSD1306_DrawPixel(x + j, (y + i), (SSD1306_COLOR_t) color);
-//			} else {
-//				SSD1306_DrawPixel(x + j, (y + i), (SSD1306_COLOR_t)!color);
-//			}
-//		}
-//	}
-	byte = 0;
-	byteWidth = (Font->FontWidth + 7) / 8;
+	byte = 0; // that variable is useful for greater fonts
+	byteWidth = (Font->FontWidth + 7) / 8; // that variable transform bits to bytes of font width
 	rowWidthBytes = Font->FontHeight * byteWidth;
 	/* Go through font */
 	for (i = 0; i < Font->FontHeight; i++) {
 			for (j = 0; j < Font->FontWidth; j++) {
-				if(j & 7)
+				if(j & 7) // gdy i =1,2,3,4,5,6 - to przesuwamy bity o jeden w lewo w kazdej iteracji
 				{
 					byte <<= 1;
 				}else /* gdy i==0 to pobieram zerowy element z tablicy,
@@ -88,30 +73,28 @@ char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
 				{
 					byte = Font->data[(ch - 32) * rowWidthBytes + i * byteWidth + j / 8];
 				}
-
 				if (byte & 0x80){
-					SSD1306_DrawPixel(x + j, (y + i), (SSD1306_COLOR_t) color);
+					SSD1306_DrawPixel( (chXpos + j), (chYpos + i), (SSD1306_COLOR_t) color);
 				} else {
-					SSD1306_DrawPixel(x + j, (y + i), (SSD1306_COLOR_t)!color);
+					SSD1306_DrawPixel( (chXpos + j), (chYpos + i), (SSD1306_COLOR_t)!color);
 				}
 			}
 		}
-	/* Increase pointer */
-	x += Font->FontWidth;
-	SSD1306_SetXY(x, y);
 	/* Return character written */
 	return ch;
 }
 
-char SSD1306_Puts(char* str, FontDef_t* Font, SSD1306_COLOR_t color) {
+char SSD1306_Putstring(uint8_t chXpos, uint8_t chYpos, char* str, FontDef_t* Font, SSD1306_COLOR_t color) {
+
 	/* Write characters */
 	while (*str) {
-		/* Write character by character */
-		if (SSD1306_Putc(*str, Font, color) != *str) {
+		/* Check available space in LCD */
+		if (SSD1306_Putchar(chXpos, chYpos, *str, Font, color) != *str) {
 			/* Return error */
 			return *str;
 		}
-
+		/* Increase position */
+		chXpos += Font->FontWidth;
 		/* Increase string pointer */
 		str++;
 	}
