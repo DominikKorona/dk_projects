@@ -106,9 +106,12 @@ void sh1106_SPI_Write(uint8_t data){
 // DMA
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart2; //temp
 #if defined(USE_DMA)
-extern volatile uint8_t dmaCounter;
+extern volatile uint8_t dmaCounter; //temp
+
+
+
 void sh1106_SPI_WriteMulti_DMA(uint8_t* data, uint16_t count) {
 //		HAL_Delay(1);
 	SH1106_CS_H();
@@ -116,7 +119,7 @@ void sh1106_SPI_WriteMulti_DMA(uint8_t* data, uint16_t count) {
 	SH1106_CS_L();
 	HAL_UART_Transmit(&huart2, (uint8_t *)"Hello, 1!\r\n", 14, HAL_MAX_DELAY);
 	HAL_SPI_Transmit_DMA(&hspi2, data, count);
-	while (HAL_SPI_GetState(&hspi2) != HAL_SPI_STATE_READY) {}
+//	while (HAL_SPI_GetState(&hspi2) != HAL_SPI_STATE_READY) {}
 //	uint8_t v=2500;
 //	while (v>0)
 //		v--;

@@ -168,8 +168,8 @@ void OLED_UpdateScreen(void) {
 #elif defined(USE_DMA)
 volatile uint8_t dmaCounter = 0;
 
-extern SPI_HandleTypeDef hspi2;
-
+extern SPI_HandleTypeDef hspi2; //temp
+////////////////////////////////////////////////////
 void OLED_UpdateScreen(void) {
 	if (dmaCounter == -1) {
 		dmaCounter = 0;
@@ -179,6 +179,7 @@ void OLED_UpdateScreen(void) {
 	OLED_WRITECMD(0x10);
 	OLED_WRITEDATA_DMA(&SSD1306_Buffer[SSD1306_WIDTH * dmaCounter], SSD1306_WIDTH);
 }
+//I2C DMA-------to dziala
 void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c){
     // Trigger the next DMA transferig
 	dmaCounter ++;
@@ -187,6 +188,9 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c){
 	}else
 		dmaCounter = -1;
 }
+//--------------
+
+//------- tu juz lipa
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
     // Trigger the next DMA transferig
 	dmaCounter ++;
@@ -197,6 +201,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 		testowy();
 	}
 }
+//-------
+////////////////////////////////////////////////////
 #endif
 
 
