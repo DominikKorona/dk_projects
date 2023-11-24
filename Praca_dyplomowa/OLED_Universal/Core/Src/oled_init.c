@@ -1,325 +1,209 @@
 
 #include "oled_init.h"
-#include "stm32f4xx_hal.h"
+#include <string.h>
 
+/*Private structure*/
+typedef struct {
+	uint8_t Inverted;
+	uint8_t Initialised;
+} Display_t;
+Display_t OLED_DISPLAY;
 
-/* Create driver variable */
-Display_t SSD1306;
-Display_t SH1106;
+/* Private data buffer */
+static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
 
-/* Global data buffer */
-uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+extern I2C_HandleTypeDef hi2c1;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// SSD1306
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+#if defined(INTERFACE_I2C)
 /* Write command */
-#define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
-/* Write data *//* Write data */
-#define SSD1306_WRITEDATA(data)            ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x40, (data))
+#define OLED_WRITECMD(command)      		ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
+//#define OLED_WRITECMD_DMA(buff, width)        	ssd1306_I2C_Write_DMA(SSD1306_I2C_ADDR, 0x40, (buff), (width))
+/* Write data */
+#define OLED_WRITEDATA(data, width)        	ssd1306_I2C_WriteMulti(SSD1306_I2C_ADDR, 0x40, (data), (width))
+	#if defined(USE_DMA)
+	#define OLED_WRITEDATA_DMA(buff, width)        	ssd1306_I2C_WriteMulti_DMA(SSD1306_I2C_ADDR, 0x40, (buff), (width))
+	#endif
+#elif defined(INTERFACE_SPI)
+/* Write command */
+#define OLED_WRITECMD(command)      		sh1106_SPI_Write(command)
+/* Write data */
+#define OLED_WRITEDATA(data,width)			sh1106_SPI_WriteMulti(data, width)
+	#if defined(USE_DMA)
+	#define OLED_WRITEDATA_DMA(buff, width)        	sh1106_SPI_WriteMulti_DMA(buff, width)
+	#endif
+#endif
 
-
-#define SSD1306_RIGHT_HORIZONTAL_SCROLL              0x26
-#define SSD1306_LEFT_HORIZONTAL_SCROLL               0x27
-#define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
-#define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL  0x2A
-#define SSD1306_DEACTIVATE_SCROLL                    0x2E // Stop scroll
-#define SSD1306_ACTIVATE_SCROLL                      0x2F // Start scroll
-#define SSD1306_SET_VERTICAL_SCROLL_AREA             0xA3 // Set scroll range
-
+#define SSD1306_DEACTIVATE_SCROLL   0x2E // Stop scroll
 #define SSD1306_NORMALDISPLAY       0xA6
 #define SSD1306_INVERTDISPLAY       0xA7
 
-extern I2C_HandleTypeDef hi2c1;
-extern SPI_HandleTypeDef hspi2;
+uint8_t OLED_Init(void) {
+	OLED_Prepare_Interface();
+	OLED_WRITECMD(0xAE); //display off
+	OLED_WRITECMD(0x20); //Set Memory Addressing Mode
+	OLED_WRITECMD(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
+	OLED_WRITECMD(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
+	OLED_WRITECMD(0xC8); //Set COM Output Scan Direction
+	OLED_WRITECMD(0x00); //---set low column address
+	OLED_WRITECMD(0x10); //---set high column address
+	OLED_WRITECMD(0x40); //--set start line address
+	OLED_WRITECMD(0x81); //--set contrast control register
+	OLED_WRITECMD(0xFF);
+	OLED_WRITECMD(0xA1); //--set segment re-map 0 to 127
+	OLED_WRITECMD(0xA6); //--set normal display
+	OLED_WRITECMD(0xA8); //--set multiplex ratio(1 to 64)
+	OLED_WRITECMD(0x3F); //1/64 duty
+	OLED_WRITECMD(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
+	OLED_WRITECMD(0xD3); //-set display offset
+	OLED_WRITECMD(0x00); //-not offset
+	OLED_WRITECMD(0xD5); //--set display clock divide ratio/oscillator frequency
+	OLED_WRITECMD(0xF0); //--set divide ratio
+	OLED_WRITECMD(0xD9); //--set pre-charge period
+		OLED_WRITECMD(0x11); //--set pre-charge period
+	OLED_WRITECMD(0x22); //
+	OLED_WRITECMD(0xDA); //--set com pins hardware configuration
+	OLED_WRITECMD(0x12);
+	OLED_WRITECMD(0xDB); //--set vcomh
+		OLED_WRITECMD(0x35); //--set vcomh
+	OLED_WRITECMD(0x20); //0x20,0.77xVcc
+	OLED_WRITECMD(0x8D); //--set DC-DC enablev
+//		OLED_WRITECMD(0xAD); //--set DC-DC enable
+//		OLED_WRITECMD(0x8B); //--set DC-DC enable
+	OLED_WRITECMD(0x14); //
+	OLED_WRITECMD(0xAF); //--turn on SSD1306 panel
 
-//extern void SSD1306_Fill(); // ?????
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// SH1106
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* Write command */
-#define SH1106_WRITECOMMAND(command)      sh1106_SPI_Write(command)
-/* Write data */
-#define SH1106_WRITEDATA(data)            sh1106_SPI_Write(data)
-
-// GPIO peripherals
-#define SH1106_GPIO_PERIPH   (RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN | RCC_AHBENR_GPIOCEN)
-// SH1106 CS (Chip Select) pin (PB4)
-#define CS_GPIO_Port 	GPIOB
-#define CS_Pin			GPIO_PIN_4
-#define SH1106_CS_H()	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_SET)
-#define SH1106_CS_L()	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_RESET)
-
-// SH1106 RS/A0 (Data/Command select) pin (PA7)
-#define DC_GPIO_Port	GPIOC
-#define DC_Pin			GPIO_PIN_7
-#define SH1106_DC_H()	HAL_GPIO_WritePin(DC_GPIO_Port, DC_Pin, GPIO_PIN_SET)
-#define SH1106_DC_L()	HAL_GPIO_WritePin(DC_GPIO_Port, DC_Pin, GPIO_PIN_RESET)
-
-// SH1106 RST (Reset) pin (PC9)
-#define RES_GPIO_Port	GPIOA
-#define RES_Pin			GPIO_PIN_9
-#define SH1106_RST_H()	HAL_GPIO_WritePin(RES_GPIO_Port, RES_Pin, GPIO_PIN_SET)
-#define SH1106_RST_L()	HAL_GPIO_WritePin(RES_GPIO_Port, RES_Pin, GPIO_PIN_RESET)
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-uint8_t SSD1306_Init(void) {
-
-	/* Check if LCD connected to I2C */
-	if (HAL_I2C_IsDeviceReady(&hi2c1, SSD1306_I2C_ADDR, 1, 20000) != HAL_OK) {
-		/* Return false */
-		return 0;
-	}
-	SSD1306_WRITECOMMAND(0xAE); //display off
-	SSD1306_WRITECOMMAND(0x20); //Set Memory Addressing Mode
-	SSD1306_WRITECOMMAND(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
-	SSD1306_WRITECOMMAND(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
-	SSD1306_WRITECOMMAND(0xC8); //Set COM Output Scan Direction
-	SSD1306_WRITECOMMAND(0x00); //---set low column address
-	SSD1306_WRITECOMMAND(0x10); //---set high column address
-	SSD1306_WRITECOMMAND(0x40); //--set start line address
-	SSD1306_WRITECOMMAND(0x81); //--set contrast control register
-	SSD1306_WRITECOMMAND(0xFF);
-	SSD1306_WRITECOMMAND(0xA1); //--set segment re-map 0 to 127
-	SSD1306_WRITECOMMAND(0xA6); //--set normal display
-	SSD1306_WRITECOMMAND(0xA8); //--set multiplex ratio(1 to 64)
-	SSD1306_WRITECOMMAND(0x3F); //1/64 duty
-	SSD1306_WRITECOMMAND(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
-	SSD1306_WRITECOMMAND(0xD3); //-set display offset
-	SSD1306_WRITECOMMAND(0x00); //-not offset
-	SSD1306_WRITECOMMAND(0xD5); //--set display clock divide ratio/oscillator frequency
-	SSD1306_WRITECOMMAND(0xF0); //--set divide ratio
-	SSD1306_WRITECOMMAND(0xD9); //--set pre-charge period
-	SSD1306_WRITECOMMAND(0x22); //
-	SSD1306_WRITECOMMAND(0xDA); //--set com pins hardware configuration
-	SSD1306_WRITECOMMAND(0x12);
-	SSD1306_WRITECOMMAND(0xDB); //--set vcomh
-	SSD1306_WRITECOMMAND(0x20); //0x20,0.77xVcc
-	SSD1306_WRITECOMMAND(0x8D); //--set DC-DC enable
-	SSD1306_WRITECOMMAND(0x14); //
-	SSD1306_WRITECOMMAND(0xAF); //--turn on SSD1306 panel
-	SSD1306.Inverted = 0;
-	SSD1306.Initialised = 1;
+	/*initialised*/
+	OLED_DISPLAY.Initialised=1;
+	/*normal colour*/
+	OLED_DISPLAY.Inverted=0;
 	/* Return OK */
 	return 1;
 }
-
 
 void SSD1306_Clear (void)
 {
 	SSD1306_Fill (0);
-    SSD1306_UpdateScreen();
+    OLED_UpdateScreen();
 }
 void SSD1306_ON(void) {
-	SSD1306_WRITECOMMAND(0x8D);
-	SSD1306_WRITECOMMAND(0x14);
-	SSD1306_WRITECOMMAND(0xAF);
+	OLED_WRITECMD(0x8D);
+	OLED_WRITECMD(0x14);
+	OLED_WRITECMD(0xAF);
 }
 void SSD1306_OFF(void) {
-	SSD1306_WRITECOMMAND(0x8D);
-	SSD1306_WRITECOMMAND(0x10);
-	SSD1306_WRITECOMMAND(0xAE);
-}
-
-/**
- * Scroll functions
- */
-
-void SSD1306_ScrollRight(uint8_t start_row, uint8_t end_row)
-{
-  SSD1306_WRITECOMMAND (SSD1306_RIGHT_HORIZONTAL_SCROLL);  // send 0x26
-  SSD1306_WRITECOMMAND (0x00);  // send dummy
-  SSD1306_WRITECOMMAND(start_row);  // start page address
-  SSD1306_WRITECOMMAND(0X00);  // time interval 5 frames
-  SSD1306_WRITECOMMAND(end_row);  // end page address
-  SSD1306_WRITECOMMAND(0X00);
-  SSD1306_WRITECOMMAND(0XFF);
-  SSD1306_WRITECOMMAND (SSD1306_ACTIVATE_SCROLL); // start scroll
-}
-
-
-void SSD1306_ScrollLeft(uint8_t start_row, uint8_t end_row)
-{
-  SSD1306_WRITECOMMAND (SSD1306_LEFT_HORIZONTAL_SCROLL);  // send 0x26
-  SSD1306_WRITECOMMAND (0x00);  // send dummy
-  SSD1306_WRITECOMMAND(start_row);  // start page address
-  SSD1306_WRITECOMMAND(0X00);  // time interval 5 frames
-  SSD1306_WRITECOMMAND(end_row);  // end page address
-  SSD1306_WRITECOMMAND(0X00);
-  SSD1306_WRITECOMMAND(0XFF);
-  SSD1306_WRITECOMMAND (SSD1306_ACTIVATE_SCROLL); // start scroll
-}
-
-
-void SSD1306_Scrolldiagright(uint8_t start_row, uint8_t end_row)
-{
-  SSD1306_WRITECOMMAND(SSD1306_SET_VERTICAL_SCROLL_AREA);  // sect the area
-  SSD1306_WRITECOMMAND (0x00);   // write dummy
-  SSD1306_WRITECOMMAND(SSD1306_HEIGHT);
-
-  SSD1306_WRITECOMMAND(SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL);
-  SSD1306_WRITECOMMAND (0x00);
-  SSD1306_WRITECOMMAND(start_row);
-  SSD1306_WRITECOMMAND(0X00);
-  SSD1306_WRITECOMMAND(end_row);
-  SSD1306_WRITECOMMAND (0x01);
-  SSD1306_WRITECOMMAND (SSD1306_ACTIVATE_SCROLL);
-}
-
-void SSD1306_Scrolldiagleft(uint8_t start_row, uint8_t end_row)
-{
-  SSD1306_WRITECOMMAND(SSD1306_SET_VERTICAL_SCROLL_AREA);  // sect the area
-  SSD1306_WRITECOMMAND (0x00);   // write dummy
-  SSD1306_WRITECOMMAND(SSD1306_HEIGHT);
-
-  SSD1306_WRITECOMMAND(SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL);
-  SSD1306_WRITECOMMAND (0x00);
-  SSD1306_WRITECOMMAND(start_row);
-  SSD1306_WRITECOMMAND(0X00);
-  SSD1306_WRITECOMMAND(end_row);
-  SSD1306_WRITECOMMAND (0x01);
-  SSD1306_WRITECOMMAND (SSD1306_ACTIVATE_SCROLL);
+	OLED_WRITECMD(0x8D);
+	OLED_WRITECMD(0x10);
+	OLED_WRITECMD(0xAE);
 }
 
 void SSD1306_Stopscroll(void)
 {
-	SSD1306_WRITECOMMAND(SSD1306_DEACTIVATE_SCROLL);
+	OLED_WRITECMD(SSD1306_DEACTIVATE_SCROLL);
 }
 void SSD1306_InvertDisplay (int i)
 {
-  if (i) SSD1306_WRITECOMMAND (SSD1306_INVERTDISPLAY);
+  if (i) OLED_WRITECMD (SSD1306_INVERTDISPLAY);
 
-  else SSD1306_WRITECOMMAND (SSD1306_NORMALDISPLAY);
+  else OLED_WRITECMD (SSD1306_NORMALDISPLAY);
 
+}
+/////////////////////////////////////////////////////////////////////////
+//
+// GRAM
+//
+/////////////////////////////////////////////////////////////////////////
+
+void SSD1306_ToggleInvert(void) {
+	uint16_t i;
+	/* Toggle invert */
+	OLED_DISPLAY.Inverted = !OLED_DISPLAY.Inverted;
+	/* Do memory toggle */
+	for (i = 0; i < sizeof(SSD1306_Buffer); i++) {
+		SSD1306_Buffer[i] = ~SSD1306_Buffer[i];
+	}
+}
+
+void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color) {
+	if (
+		x >= SSD1306_WIDTH ||
+		y >= SSD1306_HEIGHT
+	) {
+		/* Error */
+		return;
+	}
+	/* Check if pixels are inverted */
+	if (OLED_DISPLAY.Inverted) {
+		color = (SSD1306_COLOR_t)!color;
+	}
+	/* Set colour */
+	if (color == SSD1306_COLOR_WHITE) {
+		SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH] |= 1 << (y % 8);
+	} else {
+		SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH] &= ~(1 << (y % 8));
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-//  _____ ___   _____
-// |_   _|__ \ / ____|
-//   | |    ) | |
-//   | |   / /| |
-//  _| |_ / /_| |____
-// |_____|____|\_____|
+//  _____
+// / ____|
+//| |
+//| |
+//| |____
+// \_____|OMMON
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+//#define USE_DMA
 
-void SSD1306_UpdateScreen(void) {
+#if !defined(USE_DMA)
+void OLED_UpdateScreen(void) {
 	uint8_t m;
 	for (m = 0; m < 8; m++) {
-		SSD1306_WRITECOMMAND(0xB0 + m);
-		SSD1306_WRITECOMMAND(0x00);
-		SSD1306_WRITECOMMAND(0x10);
-
+		OLED_WRITECMD(0xB0 + m);
+		OLED_WRITECMD(0x00);
+		OLED_WRITECMD(0x10);
 		/* Write multi data */
-		ssd1306_I2C_WriteMulti(SSD1306_I2C_ADDR, 0x40, &SSD1306_Buffer[SSD1306_WIDTH * m], SSD1306_WIDTH);
+		OLED_WRITEDATA(&SSD1306_Buffer[SSD1306_WIDTH * m], SSD1306_WIDTH);
 	}
 }
+#elif defined(USE_DMA)
+volatile uint8_t dmaCounter = 0;
 
-void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
-	uint8_t dt[256];
-	dt[0] = reg;
-	uint16_t i;
-	for(i = 0; i < count; i++){
-		dt[i+1] = data[i];
+extern SPI_HandleTypeDef hspi2;
+
+void OLED_UpdateScreen(void) {
+	if (dmaCounter == -1) {
+		dmaCounter = 0;
 	}
-	HAL_I2C_Master_Transmit(&hi2c1, address, dt, count+1, 10);
+	OLED_WRITECMD(0xB0 + dmaCounter);
+	OLED_WRITECMD(0x00);
+	OLED_WRITECMD(0x10);
+	OLED_WRITEDATA_DMA(&SSD1306_Buffer[SSD1306_WIDTH * dmaCounter], SSD1306_WIDTH);
 }
-
-void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
-	uint8_t dt[2];
-	dt[0] = reg;
-	dt[1] = data;
-	HAL_I2C_Master_Transmit(&hi2c1, address, dt, 2, 10);
+void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c){
+    // Trigger the next DMA transferig
+	dmaCounter ++;
+	if (dmaCounter < 8) {
+		OLED_UpdateScreen();
+	}else
+		dmaCounter = -1;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// SPI
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void sh1106_SPI_WriteMulti(uint8_t* data, uint16_t count){
-	SH1106_CS_H();
-	SH1106_DC_H();
-	SH1106_CS_L();
-	HAL_SPI_Transmit(&hspi2, data, count,20);
-	SH1106_CS_H();
-}
-
-void sh1106_SPI_Write(uint8_t data){
-	SH1106_CS_H();
-	SH1106_DC_L();
-	SH1106_CS_L();
-	HAL_SPI_Transmit(&hspi2, &data, 1, 20);
-	SH1106_CS_H();
-}
-
-uint8_t SH1106_Init(void) {
-	/* Init SPI */
-	SH1106_CS_H();
-	SH1106_DC_L();
-	/* Check if LCD connected to SPI */
-	if (HAL_SPI_GetState(&hspi2) == HAL_SPI_STATE_RESET) {
-		return 0;
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
+    // Trigger the next DMA transferig
+	dmaCounter ++;
+	if (dmaCounter < 8) {
+		OLED_UpdateScreen();
+	}else{
+		dmaCounter=-1;
+		testowy();
 	}
-	/* A little delay */
-	SH1106_RST_H();
-	HAL_Delay(10);
-	SH1106_RST_L();
-	HAL_Delay(10);
-	SH1106_RST_H();
-	/* Init LCD */
-	SH1106_WRITECOMMAND(0xAE); //display off
-	SH1106_WRITECOMMAND(0x20); //Set Memory Addressing Mode
-	SH1106_WRITECOMMAND(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
-	SH1106_WRITECOMMAND(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
-	SH1106_WRITECOMMAND(0xC8); //Set COM Output Scan Direction
-	SH1106_WRITECOMMAND(0x00); //---set low column address
-	SH1106_WRITECOMMAND(0x10); //---set high column address
-	SH1106_WRITECOMMAND(0x40); //--set start line address
-	SH1106_WRITECOMMAND(0x81); //--set contrast control register
-	SH1106_WRITECOMMAND(0xFF);
-	SH1106_WRITECOMMAND(0xA1); //--set segment re-map 0 to 127
-	SH1106_WRITECOMMAND(0xA6); //--set normal display
-	SH1106_WRITECOMMAND(0xA8); //--set multiplex ratio(1 to 64)
-	SH1106_WRITECOMMAND(0x3F); //1/64 duty
-	SH1106_WRITECOMMAND(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
-	SH1106_WRITECOMMAND(0xD3); //-set display offset
-	SH1106_WRITECOMMAND(0x00); //-not offset
-	SH1106_WRITECOMMAND(0xD5); //--set display clock divide ratio/oscillator frequency
-	SH1106_WRITECOMMAND(0xF0); //--set divide ratio
-	SH1106_WRITECOMMAND(0xD9); //--set pre-charge period
-	SH1106_WRITECOMMAND(0x22); //
-	SH1106_WRITECOMMAND(0xDA); //--set com pins hardware configuration
-	SH1106_WRITECOMMAND(0x12);
-	SH1106_WRITECOMMAND(0xDB); //--set vcomh
-	SH1106_WRITECOMMAND(0x20); //0x20,0.77xVcc
-	SH1106_WRITECOMMAND(0x8D); //--set DC-DC enable
-	SH1106_WRITECOMMAND(0x14); //
-	SH1106_WRITECOMMAND(0xAF); //--turn on SSD1306 panel
-	/* Deactivate scroll and clear screen*/
-//	SH1106_WRITECOMMAND(SSD1306_DEACTIVATE_SCROLL);
-//	/* Clear screen */
-//	SSD1306_Fill(SSD1306_COLOR_BLACK);
-//	/* Update screen */
-//	SSD1306_UpdateScreen();
-	/* Set default values */
+}
+#endif
 
-	/* 0-normal ; 1-inverted */
-	SH1106.Inverted = 0;
-	/* Initialised OK */
-	SH1106.Initialised = 1;
 
-	/* Return OK */
-	return 1;
+void SSD1306_Fill(SSD1306_COLOR_t color) {
+	if (OLED_DISPLAY.Inverted) {
+		color = (SSD1306_COLOR_t)!color;
+	}
+	/* Set memory */
+	memset(SSD1306_Buffer, (color == SSD1306_COLOR_BLACK) ? 0x00 : 0xFF, sizeof(SSD1306_Buffer));
 }

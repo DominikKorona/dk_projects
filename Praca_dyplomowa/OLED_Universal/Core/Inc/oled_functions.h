@@ -25,8 +25,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ----------------------------------------------------------------------
  */
-	#ifndef SSD1306_H
-	#define SSD1306_H 100
 
 	/* C++ detection */
 	#ifdef __cplusplus
@@ -68,8 +66,6 @@
 	/* C++ detection */
 	#ifdef __cplusplus
 	}
-	#endif
-
 	#endif
 
 #endif /* INC_OLED_FUNCTIONS_H_ */

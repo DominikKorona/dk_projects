@@ -1,5 +1,4 @@
-Core/Src/oled_gram.o: ../Core/Src/oled_gram.c ../Core/Inc/oled_gram.h \
- ../Core/Inc/oled_init.h \
+Core/Src/oled_comm.o: ../Core/Src/oled_comm.c ../Core/Inc/oled_comm.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -29,8 +28,7 @@ Core/Src/oled_gram.o: ../Core/Src/oled_gram.c ../Core/Inc/oled_gram.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-../Core/Inc/oled_gram.h:
-../Core/Inc/oled_init.h:
+../Core/Inc/oled_comm.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:

@@ -41,8 +41,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
+DMA_HandleTypeDef hdma_i2c1_tx;
 
 SPI_HandleTypeDef hspi2;
+DMA_HandleTypeDef hdma_spi2_tx;
 
 UART_HandleTypeDef huart2;
 
@@ -53,6 +55,7 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_SPI2_Init(void);
@@ -93,18 +96,21 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  SSD1306_Init();
-  SH1106_Init();
+  OLED_Init();
+  HAL_Delay(1000);
+//  SSD1306_Init();
+//  SH1106_Init();
 //  SH_Init();
 //  SSD1306_Putstring(5, 1, "ABcd@#$!", &ArialBig_20x23, SSD1306_COLOR_WHITE);
 //  SSD1306_Putstring(5, 30, "ABcd@#$!", &Arial_14x16, SSD1306_COLOR_WHITE);
 //  SSD1306_Putstring(5, 50, "ABcd@#$!", &Arial8_8x10, SSD1306_COLOR_WHITE);
 //  SSD1306_UpdateScreen();
-//  HAL_Delay(4000);
+
 //  SSD1306_Clear();
   /* USER CODE END 2 */
 
@@ -113,18 +119,26 @@ int main(void)
   while (1)
   {
 
-//	  SSD1306_Putstring(2, 2, "EAGLE DESERT!", &Arial_new_7x10, SSD1306_COLOR_WHITE);
-//	  SSD1306_DrawLine(2, 14, 128, 14, SSD1306_COLOR_WHITE);
-//	  SSD1306_DrawCircle(95, 6, 4, SSD1306_COLOR_WHITE);
-//	  SSD1306_DrawRectangle(102, 2, 20, 8, SSD1306_COLOR_WHITE);
-//	  SSD1306_DrawTriangle(5, 55, 35, 55, 20, 35, SSD1306_COLOR_WHITE);
-//	  SSD1306_DrawFilledTriangle(15, 50, 25, 50, 20, 40, SSD1306_COLOR_WHITE);
-//	  SSD1306_DrawBitmap(55, 25, (const unsigned char*)deagle_56x36, 56, 36, SSD1306_COLOR_WHITE);
-//	  SSD1306_UpdateScreen();
+//	  HAL_Delay(1000);
+	  SSD1306_Fill(0);
+	  SSD1306_Putstring(2, 2, "DESERT EAGLE", &Arial_new_7x10, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawLine(2, 14, 128, 14, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawFilledCircle(95, 6, 4, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawRectangle(102, 2, 20, 8, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawTriangle(5, 55, 35, 55, 20, 35, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawFilledTriangle(15, 50, 25, 50, 20, 40, SSD1306_COLOR_WHITE);
+	  SSD1306_DrawBitmap(30, 23, (const unsigned char*)deagle_56x36, 56, 36, SSD1306_COLOR_WHITE);
+
+	  SSD1306_DrawBitmap(95, 18, (const unsigned char*)agh_24x44, 24, 44, SSD1306_COLOR_WHITE);
+	  OLED_UpdateScreen();
 //	  HAL_Delay(4000);
 
-//	  SSD1306_ToggleInvert();
-//	  SSD1306_UpdateScreen();
+	  SSD1306_ToggleInvert();
+	  OLED_UpdateScreen();
+	  HAL_Delay(2000);
+
+//	  OLED_UpdateScreen_DMA();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -280,6 +294,25 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
+  /* DMA1_Stream4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
 
 }
 

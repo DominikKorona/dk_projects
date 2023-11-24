@@ -43,7 +43,7 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
                byte = (*(const unsigned char *)(&bitmap[j * byteWidth + i / 8]));
             }
             if(byte & 0x80) SSD1306_DrawPixel(x+i, y, color);
-        }
+		}
     }
 }
 
