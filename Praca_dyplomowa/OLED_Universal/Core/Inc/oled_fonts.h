@@ -75,11 +75,20 @@ extern FontDef_t Arial8_8x10;
 extern FontDef_t Font_16x14;
 extern FontDef_t Arial_new_7x10;
 extern FontDef_t ArialBig_20x23;
+extern FontDef_t Arialsmall_5x10;
+
+extern FontDef_t icons_19x15;
+extern const uint8_t win_69x32[];
+extern const uint8_t equalizer_59x32[];
+extern const uint8_t volume_128x18[];
 
 extern const uint8_t deagle_56x36[];
 extern const uint8_t jack_84x58[];
 extern const uint8_t agh_24x44[];
-
+extern const uint8_t mountain_32x17[];
+extern const uint8_t Mountain_96x54[];
+extern const uint8_t mountain3_120x63[];
+extern const uint8_t wifi_17x15[];
 /**
  * @defgroup FONTS_Functions
  * @brief    Library functions
@@ -96,7 +105,16 @@ extern const uint8_t agh_24x44[];
 char* FONTS_GetStringSize(char* str, FONTS_SIZE_t* SizeStruct, FontDef_t* Font);
 
 /**
- * @}
+ *
+ * Font encoding often starts with an exclamation mark.
+ * Examples of alternative encoding for custom symbol in octal code.
+ * '!' = '\41'
+ * '@' = '\42'
+ * ...
+ * '0' = '\60'
+ * '1' = '\61'
+ * ...
+ * '9' = '\72'
  */
 
 /**

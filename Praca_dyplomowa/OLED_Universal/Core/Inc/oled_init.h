@@ -14,18 +14,20 @@ typedef enum {
 
 uint8_t OLED_Init(void);
 
-void SSD1306_Clear (void);
+void OLED_Clear (void);
 void SSD1306_ON(void);
 void SSD1306_OFF(void);
 void SSD1306_Stopscroll(void);
-void SSD1306_InvertDisplay (int i);
+void OLED_InvertDisplay (int i);
 
 // GRAM
 void OLED_UpdateScreen(void);
 
-void SSD1306_Fill(SSD1306_COLOR_t Color);
-void SSD1306_ToggleInvert(void);
+void OLED_Fill(SSD1306_COLOR_t Color);
+void OLED_ToggleInvert(void);
 void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color);
+
+
 ///////
 
 

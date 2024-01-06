@@ -46,6 +46,8 @@ DMA_HandleTypeDef hdma_i2c1_tx;
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi2_tx;
 
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -59,13 +61,24 @@ static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_SPI2_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//extern volatile uint8_t flag;
+//char c22[20];
+//uint16_t ff;
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+//
+//	if (htim->Instance ==TIM2){
+//		if (flag=0){
+//			ff=read_TIM2();
+//		}
+//	}
+//}
 /* USER CODE END 0 */
 
 /**
@@ -100,44 +113,42 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_SPI2_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
-  HAL_Delay(1000);
-//  SSD1306_Init();
-//  SH1106_Init();
-//  SH_Init();
-//  SSD1306_Putstring(5, 1, "ABcd@#$!", &ArialBig_20x23, SSD1306_COLOR_WHITE);
-//  SSD1306_Putstring(5, 30, "ABcd@#$!", &Arial_14x16, SSD1306_COLOR_WHITE);
-//  SSD1306_Putstring(5, 50, "ABcd@#$!", &Arial8_8x10, SSD1306_COLOR_WHITE);
-//  SSD1306_UpdateScreen();
+  HAL_TIM_Base_Start(&htim2);
+  char c[20];
+  extern volatile uint8_t dmaTransferComplete;
 
-//  SSD1306_Clear();
+  SSD1306_DrawLine(68, 60, 120, 60, SSD1306_COLOR_WHITE);
+  SSD1306_Putstring(90, 50, "Line", &Arialsmall_5x10, SSD1306_COLOR_WHITE);
+  OLED_UpdateScreen();
+
+
+  for (int i = 0; i < 50; ++i) {
+	  while (dmaTransferComplete==0){}
+	  itoa(i,c,10);
+	  SSD1306_Putstring(90, 30, c, &Arialsmall_5x10, SSD1306_COLOR_WHITE);
+	  OLED_UpdateScreen();
+  }
+
+  for (int i = 0; i < 8; ++i) {
+	  if (t1_buff_start[i]<t1_buff_end[i]) {
+		  sprintf(c,"%lu\r", t1_buff_end[i]-t1_buff_start[i]);
+		  HAL_UART_Transmit(&huart2, c, strlen(c), HAL_MAX_DELAY);
+	}else{
+		  sprintf(c,"%lu\r", 65535+t1_buff_end[i]-t1_buff_start[i]);
+		  HAL_UART_Transmit(&huart2, c, strlen(c), HAL_MAX_DELAY);
+	}
+//	  sprintf(c,"%lu,%lu\r", t1_buff_end[i],t1_buff_start[i]);
+//	  HAL_UART_Transmit(&huart2, c, strlen(c), HAL_MAX_DELAY);
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-//	  HAL_Delay(1000);
-	  SSD1306_Fill(0);
-	  SSD1306_Putstring(2, 2, "DESERT EAGLE", &Arial_new_7x10, SSD1306_COLOR_WHITE);
-	  SSD1306_DrawLine(2, 14, 128, 14, SSD1306_COLOR_WHITE);
-	  SSD1306_DrawFilledCircle(95, 6, 4, SSD1306_COLOR_WHITE);
-	  SSD1306_DrawRectangle(102, 2, 20, 8, SSD1306_COLOR_WHITE);
-	  SSD1306_DrawTriangle(5, 55, 35, 55, 20, 35, SSD1306_COLOR_WHITE);
-	  SSD1306_DrawFilledTriangle(15, 50, 25, 50, 20, 40, SSD1306_COLOR_WHITE);
-	  SSD1306_DrawBitmap(30, 23, (const unsigned char*)deagle_56x36, 56, 36, SSD1306_COLOR_WHITE);
-
-	  SSD1306_DrawBitmap(95, 18, (const unsigned char*)agh_24x44, 24, 44, SSD1306_COLOR_WHITE);
-	  OLED_UpdateScreen();
-//	  HAL_Delay(4000);
-
-	  SSD1306_ToggleInvert();
-	  OLED_UpdateScreen();
-	  HAL_Delay(2000);
-
-//	  OLED_UpdateScreen_DMA();
 
     /* USER CODE END WHILE */
 
@@ -246,8 +257,8 @@ static void MX_SPI2_Init(void)
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES;
   hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
   hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
@@ -261,6 +272,51 @@ static void MX_SPI2_Init(void)
   /* USER CODE BEGIN SPI2_Init 2 */
 
   /* USER CODE END SPI2_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 83;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 65535;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 

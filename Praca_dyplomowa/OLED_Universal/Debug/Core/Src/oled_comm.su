@@ -1,5 +1,5 @@
-../Core/Src/oled_comm.c:88:6:sh1106_SPI_WriteMulti	16	static
-../Core/Src/oled_comm.c:96:6:sh1106_SPI_Write	16	static
-../Core/Src/oled_comm.c:115:6:sh1106_SPI_WriteMulti_DMA	16	static
-../Core/Src/oled_comm.c:131:6:testowy	8	static
-../Core/Src/oled_comm.c:137:9:OLED_Prepare_Interface	8	static
+../Core/Src/oled_comm.c:20:10:micros	4	static
+../Core/Src/oled_comm.c:97:6:sh1106_SPI_WriteMulti	24	static
+../Core/Src/oled_comm.c:107:6:sh1106_SPI_Write	16	static
+../Core/Src/oled_comm.c:121:6:sh1106_SPI_WriteMulti_DMA	24	static
+../Core/Src/oled_comm.c:135:9:OLED_Prepare_Interface	8	static

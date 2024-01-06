@@ -22,6 +22,7 @@
  */
 #include "oled_functions.h"
 #define ABS(x)   ((x) > 0 ? (x) : -(x))
+#define ASCII_OFFSET 32
 
 
 void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color)
@@ -71,7 +72,7 @@ char SSD1306_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, S
 				}else /* gdy i==0 to pobieram zerowy element z tablicy,
 					   * i==8,==16 itd. to pobieram sasiedni element**/
 				{
-					byte = Font->data[(ch - 32) * rowWidthBytes + i * byteWidth + j / 8];
+					byte = Font->data[(ch - ASCII_OFFSET) * rowWidthBytes + i * byteWidth + j / 8];
 				}
 				if (byte & 0x80){
 					SSD1306_DrawPixel( (chXpos + j), (chYpos + i), (SSD1306_COLOR_t) color);
