@@ -5,16 +5,12 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/Arial8.c \
-../Core/Src/ArialBig.c \
-../Core/Src/Arial_new.c \
-../Core/Src/Arialsmall.c \
-../Core/Src/Font.c \
-../Core/Src/font_arial_14pt.c \
+../Core/Src/Arial_08pt.c \
+../Core/Src/Arial_14pt.c \
+../Core/Src/Arial_20pt.c \
+../Core/Src/Bitmaps.c \
 ../Core/Src/main.c \
-../Core/Src/oled_bitmaps.c \
 ../Core/Src/oled_comm.c \
-../Core/Src/oled_fonts.c \
 ../Core/Src/oled_functions.c \
 ../Core/Src/oled_icons.c \
 ../Core/Src/oled_init.c \
@@ -25,16 +21,12 @@ C_SRCS += \
 ../Core/Src/system_stm32f4xx.c 
 
 OBJS += \
-./Core/Src/Arial8.o \
-./Core/Src/ArialBig.o \
-./Core/Src/Arial_new.o \
-./Core/Src/Arialsmall.o \
-./Core/Src/Font.o \
-./Core/Src/font_arial_14pt.o \
+./Core/Src/Arial_08pt.o \
+./Core/Src/Arial_14pt.o \
+./Core/Src/Arial_20pt.o \
+./Core/Src/Bitmaps.o \
 ./Core/Src/main.o \
-./Core/Src/oled_bitmaps.o \
 ./Core/Src/oled_comm.o \
-./Core/Src/oled_fonts.o \
 ./Core/Src/oled_functions.o \
 ./Core/Src/oled_icons.o \
 ./Core/Src/oled_init.o \
@@ -45,16 +37,12 @@ OBJS += \
 ./Core/Src/system_stm32f4xx.o 
 
 C_DEPS += \
-./Core/Src/Arial8.d \
-./Core/Src/ArialBig.d \
-./Core/Src/Arial_new.d \
-./Core/Src/Arialsmall.d \
-./Core/Src/Font.d \
-./Core/Src/font_arial_14pt.d \
+./Core/Src/Arial_08pt.d \
+./Core/Src/Arial_14pt.d \
+./Core/Src/Arial_20pt.d \
+./Core/Src/Bitmaps.d \
 ./Core/Src/main.d \
-./Core/Src/oled_bitmaps.d \
 ./Core/Src/oled_comm.d \
-./Core/Src/oled_fonts.d \
 ./Core/Src/oled_functions.d \
 ./Core/Src/oled_icons.d \
 ./Core/Src/oled_init.d \
@@ -72,7 +60,7 @@ Core/Src/%.o Core/Src/%.su: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/Arial8.d ./Core/Src/Arial8.o ./Core/Src/Arial8.su ./Core/Src/ArialBig.d ./Core/Src/ArialBig.o ./Core/Src/ArialBig.su ./Core/Src/Arial_new.d ./Core/Src/Arial_new.o ./Core/Src/Arial_new.su ./Core/Src/Arialsmall.d ./Core/Src/Arialsmall.o ./Core/Src/Arialsmall.su ./Core/Src/Font.d ./Core/Src/Font.o ./Core/Src/Font.su ./Core/Src/font_arial_14pt.d ./Core/Src/font_arial_14pt.o ./Core/Src/font_arial_14pt.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/oled_bitmaps.d ./Core/Src/oled_bitmaps.o ./Core/Src/oled_bitmaps.su ./Core/Src/oled_comm.d ./Core/Src/oled_comm.o ./Core/Src/oled_comm.su ./Core/Src/oled_fonts.d ./Core/Src/oled_fonts.o ./Core/Src/oled_fonts.su ./Core/Src/oled_functions.d ./Core/Src/oled_functions.o ./Core/Src/oled_functions.su ./Core/Src/oled_icons.d ./Core/Src/oled_icons.o ./Core/Src/oled_icons.su ./Core/Src/oled_init.d ./Core/Src/oled_init.o ./Core/Src/oled_init.su ./Core/Src/stm32f4xx_hal_msp.d ./Core/Src/stm32f4xx_hal_msp.o ./Core/Src/stm32f4xx_hal_msp.su ./Core/Src/stm32f4xx_it.d ./Core/Src/stm32f4xx_it.o ./Core/Src/stm32f4xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/system_stm32f4xx.su
+	-$(RM) ./Core/Src/Arial_08pt.d ./Core/Src/Arial_08pt.o ./Core/Src/Arial_08pt.su ./Core/Src/Arial_14pt.d ./Core/Src/Arial_14pt.o ./Core/Src/Arial_14pt.su ./Core/Src/Arial_20pt.d ./Core/Src/Arial_20pt.o ./Core/Src/Arial_20pt.su ./Core/Src/Bitmaps.d ./Core/Src/Bitmaps.o ./Core/Src/Bitmaps.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/oled_comm.d ./Core/Src/oled_comm.o ./Core/Src/oled_comm.su ./Core/Src/oled_functions.d ./Core/Src/oled_functions.o ./Core/Src/oled_functions.su ./Core/Src/oled_icons.d ./Core/Src/oled_icons.o ./Core/Src/oled_icons.su ./Core/Src/oled_init.d ./Core/Src/oled_init.o ./Core/Src/oled_init.su ./Core/Src/stm32f4xx_hal_msp.d ./Core/Src/stm32f4xx_hal_msp.o ./Core/Src/stm32f4xx_hal_msp.su ./Core/Src/stm32f4xx_it.d ./Core/Src/stm32f4xx_it.o ./Core/Src/stm32f4xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/system_stm32f4xx.su
 
 .PHONY: clean-Core-2f-Src
 

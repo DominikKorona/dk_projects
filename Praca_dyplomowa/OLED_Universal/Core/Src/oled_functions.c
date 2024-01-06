@@ -25,7 +25,7 @@
 #define ASCII_OFFSET 32
 
 
-void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color)
+void OLED_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color)
 {
 
     int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
@@ -43,19 +43,19 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
             {
                byte = (*(const unsigned char *)(&bitmap[j * byteWidth + i / 8]));
             }
-            if(byte & 0x80) SSD1306_DrawPixel(x+i, y, color);
+            if(byte & 0x80) OLED_DrawPixel(x+i, y, color);
 		}
     }
 }
 
 
-char SSD1306_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
+char OLED_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, OLED_COLOR_t color) {
 
 	uint8_t i, j;
 	uint8_t byte, byteWidth, rowWidthBytes;
 	if (
-		SSD1306_WIDTH <= (chXpos + Font->FontWidth) ||
-		SSD1306_HEIGHT <= (chYpos + Font->FontHeight)
+		OLED_WIDTH <= (chXpos + Font->FontWidth) ||
+		OLED_HEIGHT <= (chYpos + Font->FontHeight)
 	) {
 		/* Error */
 		return 0;
@@ -75,9 +75,9 @@ char SSD1306_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, S
 					byte = Font->data[(ch - ASCII_OFFSET) * rowWidthBytes + i * byteWidth + j / 8];
 				}
 				if (byte & 0x80){
-					SSD1306_DrawPixel( (chXpos + j), (chYpos + i), (SSD1306_COLOR_t) color);
+					OLED_DrawPixel( (chXpos + j), (chYpos + i), (OLED_COLOR_t) color);
 				} else {
-					SSD1306_DrawPixel( (chXpos + j), (chYpos + i), (SSD1306_COLOR_t)!color);
+					OLED_DrawPixel( (chXpos + j), (chYpos + i), (OLED_COLOR_t)!color);
 				}
 			}
 		}
@@ -85,12 +85,12 @@ char SSD1306_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, S
 	return ch;
 }
 
-char SSD1306_Putstring(uint8_t chXpos, uint8_t chYpos, char* str, FontDef_t* Font, SSD1306_COLOR_t color) {
+char OLED_Putstring(uint8_t chXpos, uint8_t chYpos, char* str, FontDef_t* Font, OLED_COLOR_t color) {
 
 	/* Write characters */
 	while (*str) {
 		/* Check available space in LCD */
-		if (SSD1306_Putchar(chXpos, chYpos, *str, Font, color) != *str) {
+		if (OLED_Putchar(chXpos, chYpos, *str, Font, color) != *str) {
 			/* Return error */
 			return *str;
 		}
@@ -104,21 +104,21 @@ char SSD1306_Putstring(uint8_t chXpos, uint8_t chYpos, char* str, FontDef_t* Fon
 	return *str;
 }
 
-void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD1306_COLOR_t c) {
+void OLED_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, OLED_COLOR_t c) {
 	int16_t dx, dy, sx, sy, err, e2, i, tmp;
 
 	/* Check for overflow */
-	if (x0 >= SSD1306_WIDTH) {
-		x0 = SSD1306_WIDTH - 1;
+	if (x0 >= OLED_WIDTH) {
+		x0 = OLED_WIDTH - 1;
 	}
-	if (x1 >= SSD1306_WIDTH) {
-		x1 = SSD1306_WIDTH - 1;
+	if (x1 >= OLED_WIDTH) {
+		x1 = OLED_WIDTH - 1;
 	}
-	if (y0 >= SSD1306_HEIGHT) {
-		y0 = SSD1306_HEIGHT - 1;
+	if (y0 >= OLED_HEIGHT) {
+		y0 = OLED_HEIGHT - 1;
 	}
-	if (y1 >= SSD1306_HEIGHT) {
-		y1 = SSD1306_HEIGHT - 1;
+	if (y1 >= OLED_HEIGHT) {
+		y1 = OLED_HEIGHT - 1;
 	}
 
 	dx = (x0 < x1) ? (x1 - x0) : (x0 - x1);
@@ -142,7 +142,7 @@ void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD130
 
 		/* Vertical line */
 		for (i = y0; i <= y1; i++) {
-			SSD1306_DrawPixel(x0, i, c);
+			OLED_DrawPixel(x0, i, c);
 		}
 
 		/* Return from function */
@@ -164,7 +164,7 @@ void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD130
 
 		/* Horizontal line */
 		for (i = x0; i <= x1; i++) {
-			SSD1306_DrawPixel(i, y0, c);
+			OLED_DrawPixel(i, y0, c);
 		}
 
 		/* Return from function */
@@ -172,7 +172,7 @@ void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD130
 	}
 
 	while (1) {
-		SSD1306_DrawPixel(x0, y0, c);
+		OLED_DrawPixel(x0, y0, c);
 		if (x0 == x1 && y0 == y1) {
 			break;
 		}
@@ -188,67 +188,67 @@ void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD130
 	}
 }
 
-void SSD1306_DrawRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c) {
+void OLED_DrawRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, OLED_COLOR_t c) {
 	/* Check input parameters */
 	if (
-		x >= SSD1306_WIDTH ||
-		y >= SSD1306_HEIGHT
+		x >= OLED_WIDTH ||
+		y >= OLED_HEIGHT
 	) {
 		/* Return error */
 		return;
 	}
 
 	/* Check width and height */
-	if ((x + w) >= SSD1306_WIDTH) {
-		w = SSD1306_WIDTH - x;
+	if ((x + w) >= OLED_WIDTH) {
+		w = OLED_WIDTH - x;
 	}
-	if ((y + h) >= SSD1306_HEIGHT) {
-		h = SSD1306_HEIGHT - y;
+	if ((y + h) >= OLED_HEIGHT) {
+		h = OLED_HEIGHT - y;
 	}
 
 	/* Draw 4 lines */
-	SSD1306_DrawLine(x, y, x + w, y, c);         /* Top line */
-	SSD1306_DrawLine(x, y + h, x + w, y + h, c); /* Bottom line */
-	SSD1306_DrawLine(x, y, x, y + h, c);         /* Left line */
-	SSD1306_DrawLine(x + w, y, x + w, y + h, c); /* Right line */
+	OLED_DrawLine(x, y, x + w, y, c);         /* Top line */
+	OLED_DrawLine(x, y + h, x + w, y + h, c); /* Bottom line */
+	OLED_DrawLine(x, y, x, y + h, c);         /* Left line */
+	OLED_DrawLine(x + w, y, x + w, y + h, c); /* Right line */
 }
 
-void SSD1306_DrawFilledRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c) {
+void OLED_DrawFilledRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, OLED_COLOR_t c) {
 	uint8_t i;
 
 	/* Check input parameters */
 	if (
-		x >= SSD1306_WIDTH ||
-		y >= SSD1306_HEIGHT
+		x >= OLED_WIDTH ||
+		y >= OLED_HEIGHT
 	) {
 		/* Return error */
 		return;
 	}
 
 	/* Check width and height */
-	if ((x + w) >= SSD1306_WIDTH) {
-		w = SSD1306_WIDTH - x;
+	if ((x + w) >= OLED_WIDTH) {
+		w = OLED_WIDTH - x;
 	}
-	if ((y + h) >= SSD1306_HEIGHT) {
-		h = SSD1306_HEIGHT - y;
+	if ((y + h) >= OLED_HEIGHT) {
+		h = OLED_HEIGHT - y;
 	}
 
 	/* Draw lines */
 	for (i = 0; i <= h; i++) {
 		/* Draw lines */
-		SSD1306_DrawLine(x, y + i, x + w, y + i, c);
+		OLED_DrawLine(x, y + i, x + w, y + i, c);
 	}
 }
 
-void SSD1306_DrawTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color) {
+void OLED_DrawTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, OLED_COLOR_t color) {
 	/* Draw lines */
-	SSD1306_DrawLine(x1, y1, x2, y2, color);
-	SSD1306_DrawLine(x2, y2, x3, y3, color);
-	SSD1306_DrawLine(x3, y3, x1, y1, color);
+	OLED_DrawLine(x1, y1, x2, y2, color);
+	OLED_DrawLine(x2, y2, x3, y3, color);
+	OLED_DrawLine(x3, y3, x1, y1, color);
 }
 
 
-void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color) {
+void OLED_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, OLED_COLOR_t color) {
 	int16_t deltax = 0, deltay = 0, x = 0, y = 0, xinc1 = 0, xinc2 = 0,
 	yinc1 = 0, yinc2 = 0, den = 0, num = 0, numadd = 0, numpixels = 0,
 	curpixel = 0;
@@ -291,7 +291,7 @@ void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t 
 	}
 
 	for (curpixel = 0; curpixel <= numpixels; curpixel++) {
-		SSD1306_DrawLine(x, y, x3, y3, color);
+		OLED_DrawLine(x, y, x3, y3, color);
 
 		num += numadd;
 		if (num >= den) {
@@ -304,17 +304,17 @@ void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t 
 	}
 }
 
-void SSD1306_DrawCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c) {
+void OLED_DrawCircle(int16_t x0, int16_t y0, int16_t r, OLED_COLOR_t c) {
 	int16_t f = 1 - r;
 	int16_t ddF_x = 1;
 	int16_t ddF_y = -2 * r;
 	int16_t x = 0;
 	int16_t y = r;
 
-    SSD1306_DrawPixel(x0, y0 + r, c);
-    SSD1306_DrawPixel(x0, y0 - r, c);
-    SSD1306_DrawPixel(x0 + r, y0, c);
-    SSD1306_DrawPixel(x0 - r, y0, c);
+    OLED_DrawPixel(x0, y0 + r, c);
+    OLED_DrawPixel(x0, y0 - r, c);
+    OLED_DrawPixel(x0 + r, y0, c);
+    OLED_DrawPixel(x0 - r, y0, c);
 
     while (x < y) {
         if (f >= 0) {
@@ -326,30 +326,30 @@ void SSD1306_DrawCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c) {
         ddF_x += 2;
         f += ddF_x;
 
-        SSD1306_DrawPixel(x0 + x, y0 + y, c);
-        SSD1306_DrawPixel(x0 - x, y0 + y, c);
-        SSD1306_DrawPixel(x0 + x, y0 - y, c);
-        SSD1306_DrawPixel(x0 - x, y0 - y, c);
+        OLED_DrawPixel(x0 + x, y0 + y, c);
+        OLED_DrawPixel(x0 - x, y0 + y, c);
+        OLED_DrawPixel(x0 + x, y0 - y, c);
+        OLED_DrawPixel(x0 - x, y0 - y, c);
 
-        SSD1306_DrawPixel(x0 + y, y0 + x, c);
-        SSD1306_DrawPixel(x0 - y, y0 + x, c);
-        SSD1306_DrawPixel(x0 + y, y0 - x, c);
-        SSD1306_DrawPixel(x0 - y, y0 - x, c);
+        OLED_DrawPixel(x0 + y, y0 + x, c);
+        OLED_DrawPixel(x0 - y, y0 + x, c);
+        OLED_DrawPixel(x0 + y, y0 - x, c);
+        OLED_DrawPixel(x0 - y, y0 - x, c);
     }
 }
 
-void SSD1306_DrawFilledCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c) {
+void OLED_DrawFilledCircle(int16_t x0, int16_t y0, int16_t r, OLED_COLOR_t c) {
 	int16_t f = 1 - r;
 	int16_t ddF_x = 1;
 	int16_t ddF_y = -2 * r;
 	int16_t x = 0;
 	int16_t y = r;
 
-    SSD1306_DrawPixel(x0, y0 + r, c);
-    SSD1306_DrawPixel(x0, y0 - r, c);
-    SSD1306_DrawPixel(x0 + r, y0, c);
-    SSD1306_DrawPixel(x0 - r, y0, c);
-    SSD1306_DrawLine(x0 - r, y0, x0 + r, y0, c);
+    OLED_DrawPixel(x0, y0 + r, c);
+    OLED_DrawPixel(x0, y0 - r, c);
+    OLED_DrawPixel(x0 + r, y0, c);
+    OLED_DrawPixel(x0 - r, y0, c);
+    OLED_DrawLine(x0 - r, y0, x0 + r, y0, c);
 
     while (x < y) {
         if (f >= 0) {
@@ -361,10 +361,10 @@ void SSD1306_DrawFilledCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t
         ddF_x += 2;
         f += ddF_x;
 
-        SSD1306_DrawLine(x0 - x, y0 + y, x0 + x, y0 + y, c);
-        SSD1306_DrawLine(x0 + x, y0 - y, x0 - x, y0 - y, c);
+        OLED_DrawLine(x0 - x, y0 + y, x0 + x, y0 + y, c);
+        OLED_DrawLine(x0 + x, y0 - y, x0 - x, y0 - y, c);
 
-        SSD1306_DrawLine(x0 + y, y0 + x, x0 - y, y0 + x, c);
-        SSD1306_DrawLine(x0 + y, y0 - x, x0 - y, y0 - x, c);
+        OLED_DrawLine(x0 + y, y0 + x, x0 - y, y0 + x, c);
+        OLED_DrawLine(x0 + y, y0 - x, x0 - y, y0 - x, c);
     }
 }

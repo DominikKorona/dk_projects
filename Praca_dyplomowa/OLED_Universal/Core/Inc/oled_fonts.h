@@ -70,25 +70,11 @@ typedef struct {
 	uint16_t Height;      /*!< String height in units of pixels */
 } FONTS_SIZE_t;
 
-extern FontDef_t Arial_14x16;
-extern FontDef_t Arial8_8x10;
-extern FontDef_t Font_16x14;
-extern FontDef_t Arial_new_7x10;
-extern FontDef_t ArialBig_20x23;
-extern FontDef_t Arialsmall_5x10;
+extern FontDef_t Arial_14x16; 		// font_arial_14pt.c
+extern FontDef_t Arial8_8x10;		// Arial8.c
+extern FontDef_t ArialBig_20x23;	// ArialBig.c
+extern FontDef_t icons_19x15;		// oled_icons.c
 
-extern FontDef_t icons_19x15;
-extern const uint8_t win_69x32[];
-extern const uint8_t equalizer_59x32[];
-extern const uint8_t volume_128x18[];
-
-extern const uint8_t deagle_56x36[];
-extern const uint8_t jack_84x58[];
-extern const uint8_t agh_24x44[];
-extern const uint8_t mountain_32x17[];
-extern const uint8_t Mountain_96x54[];
-extern const uint8_t mountain3_120x63[];
-extern const uint8_t wifi_17x15[];
 /**
  * @defgroup FONTS_Functions
  * @brief    Library functions

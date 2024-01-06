@@ -15,7 +15,7 @@ volatile uint8_t dmaTransferComplete=1;
 
 ////////////////////////////////////////////////TIMER
 /* Private data buffer */
-static uint8_t OLED_BUFFER[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+static uint8_t OLED_BUFFER[OLED_WIDTH * OLED_HEIGHT / 8];
 
 // I2C
 #if defined(INTERFACE_I2C)
@@ -86,12 +86,12 @@ void OLED_Clear(void)
 	OLED_Fill (0);
     OLED_UpdateScreen();
 }
-void OLED_Fill(SSD1306_COLOR_t color) {
+void OLED_Fill(OLED_COLOR_t color) {
 	if (OLED_DISPLAY.Inverted) {
-		color = (SSD1306_COLOR_t)!color;
+		color = (OLED_COLOR_t)!color;
 	}
 	/* Set memory */
-	memset(OLED_BUFFER, (color == SSD1306_COLOR_BLACK) ? 0x00 : 0xFF, sizeof(OLED_BUFFER));
+	memset(OLED_BUFFER, (color == OLED_COLOR_BLACK) ? 0x00 : 0xFF, sizeof(OLED_BUFFER));
 }
 void SSD1306_ON(void) {
 	OLED_WRITECMD(0x8D);
@@ -131,23 +131,23 @@ void OLED_ToggleInvert(void) {
 	}
 }
 
-void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color) {
+void OLED_DrawPixel(uint16_t x, uint16_t y, OLED_COLOR_t color) {
 	if (
-		x >= SSD1306_WIDTH ||
-		y >= SSD1306_HEIGHT
+		x >= OLED_WIDTH ||
+		y >= OLED_HEIGHT
 	) {
 		/* Error */
 		return;
 	}
 	/* Check if pixels are inverted */
 	if (OLED_DISPLAY.Inverted) {
-		color = (SSD1306_COLOR_t)!color;
+		color = (OLED_COLOR_t)!color;
 	}
 	/* Set colour */
-	if (color == SSD1306_COLOR_WHITE) {
-		OLED_BUFFER[x + (y / 8) * SSD1306_WIDTH] |= 1 << (y % 8);
+	if (color == OLED_COLOR_WHITE) {
+		OLED_BUFFER[x + (y / 8) * OLED_WIDTH] |= 1 << (y % 8);
 	} else {
-		OLED_BUFFER[x + (y / 8) * SSD1306_WIDTH] &= ~(1 << (y % 8));
+		OLED_BUFFER[x + (y / 8) * OLED_WIDTH] &= ~(1 << (y % 8));
 	}
 }
 
@@ -205,7 +205,7 @@ void OLED_UpdateScreen(void) {
 	OLED_WRITECMD(0x02);
 	OLED_WRITECMD(0x10);
 
-	OLED_WRITEDATA_DMA(&OLED_BUFFER[SSD1306_WIDTH * dmaCounter], SSD1306_WIDTH);
+	OLED_WRITEDATA_DMA(&OLED_BUFFER[OLED_WIDTH * dmaCounter], OLED_WIDTH);
 }
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {

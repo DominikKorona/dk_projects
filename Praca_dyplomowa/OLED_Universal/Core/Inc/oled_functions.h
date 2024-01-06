@@ -32,7 +32,7 @@
 	#endif
 
 	/**
-	 * This SSD1306 LCD uses I2C for communication
+	 * This OLED LCD uses I2C for communication
 	 *
 	 * Library features functions for drawing lines, rectangles and circles.
 	 *
@@ -40,7 +40,7 @@
 	 *
 	 * Default pinout
 	 *
-	SSD1306    |STM32F10x    |DESCRIPTION
+	OLED    |STM32F10x    |DESCRIPTION
 
 	VCC        |3.3V         |
 	GND        |GND          |
@@ -51,17 +51,17 @@
 	#include "oled_init.h"
 	#include "oled_fonts.h"
 
-	void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color);
-	char SSD1306_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, SSD1306_COLOR_t color);
-	char SSD1306_Putstring(uint8_t chXpos, uint8_t chYpos, char* str, FontDef_t* Font, SSD1306_COLOR_t color);
+	void OLED_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color);
+	char OLED_Putchar(uint8_t chXpos, uint8_t chYpos, char ch, FontDef_t* Font, OLED_COLOR_t color);
+	char OLED_Putstring(uint8_t chXpos, uint8_t chYpos, char* str, FontDef_t* Font, OLED_COLOR_t color);
 
-	void SSD1306_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD1306_COLOR_t c);
-	void SSD1306_DrawRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c);
-	void SSD1306_DrawFilledRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c);
-	void SSD1306_DrawTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color);
-	void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color);
-	void SSD1306_DrawCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c);
-	void SSD1306_DrawFilledCircle(int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c);
+	void OLED_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, OLED_COLOR_t c);
+	void OLED_DrawRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, OLED_COLOR_t c);
+	void OLED_DrawFilledRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, OLED_COLOR_t c);
+	void OLED_DrawTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, OLED_COLOR_t color);
+	void OLED_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, OLED_COLOR_t color);
+	void OLED_DrawCircle(int16_t x0, int16_t y0, int16_t r, OLED_COLOR_t c);
+	void OLED_DrawFilledCircle(int16_t x0, int16_t y0, int16_t r, OLED_COLOR_t c);
 
 	/* C++ detection */
 	#ifdef __cplusplus

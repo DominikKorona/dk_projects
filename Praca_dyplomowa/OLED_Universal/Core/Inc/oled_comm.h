@@ -23,11 +23,11 @@ SH1106     |STM32F41x    |DESCRIPTION
 
 VCC        |3.3V         |
 GND        |GND          |
-MOSI       |PB_          |Serial clock line
-RES        |PB_          |Serial data line
-CLK        |PB_          |Serial clock line
-DC         |PB_          |Serial data line
-CS         |PB_          |Serial data line
+MOSI       |PC_3         |Serial data line
+RST        |PC_9         |Reset
+CLK        |PB_10        |Serial clock line
+DC         |PA_7         |Data/Command
+CS         |PB_4         |Chip select
  */
 /* Configuration */
 // Clock Parameters
@@ -47,12 +47,12 @@ CS         |PB_          |Serial data line
 
 /* OLED settings */
 /* OLED display width in pixels */
-#ifndef SSD1306_WIDTH
-#define SSD1306_WIDTH            128
+#ifndef OLED_WIDTH
+#define OLED_WIDTH            128
 #endif
 /* OLED display in pixels */
-#ifndef SSD1306_HEIGHT
-#define SSD1306_HEIGHT           64
+#ifndef OLED_HEIGHT
+#define OLED_HEIGHT           64
 #endif
 
 #ifndef ssd1306_I2C_TIMEOUT

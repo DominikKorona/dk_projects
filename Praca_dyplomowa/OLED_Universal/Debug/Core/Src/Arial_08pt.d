@@ -1,4 +1,4 @@
-Core/Src/Arial_new.o: ../Core/Src/Arial_new.c ../Core/Inc/oled_fonts.h \
+Core/Src/Arial_08pt.o: ../Core/Src/Arial_08pt.c ../Core/Inc/oled_fonts.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \

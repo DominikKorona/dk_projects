@@ -6,7 +6,7 @@
 ../Core/Src/oled_init.c:107:6:SSD1306_Stopscroll	8	static
 ../Core/Src/oled_init.c:111:6:OLED_InvertDisplay	16	static
 ../Core/Src/oled_init.c:124:6:OLED_ToggleInvert	16	static
-../Core/Src/oled_init.c:134:6:SSD1306_DrawPixel	16	static
+../Core/Src/oled_init.c:134:6:OLED_DrawPixel	16	static
 ../Core/Src/oled_init.c:199:6:OLED_UpdateScreen	8	static
 ../Core/Src/oled_init.c:211:6:HAL_SPI_TxCpltCallback	16	static
 ../Core/Src/oled_init.c:222:6:HAL_I2C_MemTxCpltCallback	16	static

@@ -8,9 +8,9 @@
  * @brief  SSD1306 colour enumeration
  */
 typedef enum {
-	SSD1306_COLOR_BLACK = 0x00, /*!< Black colour, no pixel */
-	SSD1306_COLOR_WHITE = 0x01  /*!< Pixel is set. Colour depends on LCD */
-} SSD1306_COLOR_t;
+	OLED_COLOR_BLACK = 0x00, /*!< Black colour, no pixel */
+	OLED_COLOR_WHITE = 0x01  /*!< Pixel is set. Colour depends on LCD */
+} OLED_COLOR_t;
 
 uint8_t OLED_Init(void);
 
@@ -23,9 +23,9 @@ void OLED_InvertDisplay (int i);
 // GRAM
 void OLED_UpdateScreen(void);
 
-void OLED_Fill(SSD1306_COLOR_t Color);
+void OLED_Fill(OLED_COLOR_t Color);
 void OLED_ToggleInvert(void);
-void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color);
+void OLED_DrawPixel(uint16_t x, uint16_t y, OLED_COLOR_t color);
 
 
 ///////

@@ -82,7 +82,7 @@ void ssd1306_I2C_WriteMulti_DMA(uint8_t address, uint8_t reg, uint8_t* buff, uin
 #define SH1106_CS_H()	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_SET)
 #define SH1106_CS_L()	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_RESET)
 
-// SH1106 RS/A0 (Data/Command select) pin (PA7)
+// SH1106 DC/A0 (Data/Command select) pin (PA7)
 #define DC_GPIO_Port	GPIOC
 #define DC_Pin			GPIO_PIN_7
 #define SH1106_DC_H()	HAL_GPIO_WritePin(DC_GPIO_Port, DC_Pin, GPIO_PIN_SET)

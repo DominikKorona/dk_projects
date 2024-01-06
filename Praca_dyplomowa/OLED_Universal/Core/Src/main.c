@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "oled_functions.h"
 #include "oled_fonts.h"
+#include "oled_bitmaps.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -116,19 +117,26 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
+
+
+  OLED_DrawBitmap(0, 0, &deagle_56x36, 56, 36, OLED_COLOR_WHITE);
+  OLED_UpdateScreen();
+  HAL_Delay(1000);
+  OLED_Clear();
+  OLED_UpdateScreen();
+  // Testy prędkosci transmisji
   HAL_TIM_Base_Start(&htim2);
   char c[20];
   extern volatile uint8_t dmaTransferComplete;
 
-  SSD1306_DrawLine(68, 60, 120, 60, SSD1306_COLOR_WHITE);
-  SSD1306_Putstring(90, 50, "Line", &Arialsmall_5x10, SSD1306_COLOR_WHITE);
+  OLED_DrawLine(68, 60, 120, 60, OLED_COLOR_WHITE);
+  OLED_Putstring(90, 50, "Line", &Arial8_8x10, OLED_COLOR_WHITE);
   OLED_UpdateScreen();
-
 
   for (int i = 0; i < 50; ++i) {
 	  while (dmaTransferComplete==0){}
 	  itoa(i,c,10);
-	  SSD1306_Putstring(90, 30, c, &Arialsmall_5x10, SSD1306_COLOR_WHITE);
+	  OLED_Putstring(90, 30, c, &Arial8_8x10, OLED_COLOR_WHITE);
 	  OLED_UpdateScreen();
   }
 
@@ -140,8 +148,6 @@ int main(void)
 		  sprintf(c,"%lu\r", 65535+t1_buff_end[i]-t1_buff_start[i]);
 		  HAL_UART_Transmit(&huart2, c, strlen(c), HAL_MAX_DELAY);
 	}
-//	  sprintf(c,"%lu,%lu\r", t1_buff_end[i],t1_buff_start[i]);
-//	  HAL_UART_Transmit(&huart2, c, strlen(c), HAL_MAX_DELAY);
   }
   /* USER CODE END 2 */
 

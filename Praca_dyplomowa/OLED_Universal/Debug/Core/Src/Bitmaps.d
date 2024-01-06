@@ -1,4 +1,4 @@
-Core/Src/oled_fonts.o: ../Core/Src/oled_fonts.c ../Core/Inc/oled_fonts.h \
+Core/Src/Bitmaps.o: ../Core/Src/Bitmaps.c ../Core/Inc/oled_bitmaps.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -30,7 +30,7 @@ Core/Src/oled_fonts.o: ../Core/Src/oled_fonts.c ../Core/Inc/oled_fonts.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-../Core/Inc/oled_fonts.h:
+../Core/Inc/oled_bitmaps.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:

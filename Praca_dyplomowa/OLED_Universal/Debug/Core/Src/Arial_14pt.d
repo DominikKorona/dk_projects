@@ -1,5 +1,4 @@
-Core/Src/oled_bitmaps.o: ../Core/Src/oled_bitmaps.c \
- ../Core/Inc/oled_fonts.h \
+Core/Src/Arial_14pt.o: ../Core/Src/Arial_14pt.c ../Core/Inc/oled_fonts.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
