@@ -1,6 +1,0 @@
-../Core/Src/motor.c:12:6:tb6612_init	8	static
-../Core/Src/motor.c:23:6:motor_a_direction	16	static
-../Core/Src/motor.c:33:6:motor_a_speed	16	static
-../Core/Src/motor.c:48:6:motor_b_direction	16	static
-../Core/Src/motor.c:58:6:motor_b_speed	16	static
-../Core/Src/motor.c:75:6:tb6612_mode_control	16	static
