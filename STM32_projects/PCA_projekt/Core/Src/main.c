@@ -54,15 +54,45 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM2_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#include "pca9685.h"
 
+uint8_t angle;
+uint8_t mode = 0;
+uint32_t last_button_press = 0; // Zmienna przechowująca czas ostatniego naciśnięcia przycisku
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim == &htim2) {
+	  if (mode==0) {
+		  set_default_value();
+	  }
+	  if (mode==1) {
+		  if (angle<=45){
+			  angle++;
+			  PCA9685_SetServoAngle(1, 90-angle*2);
+			  PCA9685_SetServoAngle(2, 90-angle);
+
+			  PCA9685_SetServoAngle(4, 90+angle);
+			  PCA9685_SetServoAngle(5, 90+angle*1.5);
+			  PCA9685_SetServoAngle(7, 90-angle);
+			  PCA9685_SetServoAngle(8, 90-angle*1.5);
+
+			  PCA9685_SetServoAngle(10, 90+angle*2);
+			  PCA9685_SetServoAngle(11, 90+angle);
+
+		  }
+
+	}
+//    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -94,8 +124,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_TIM2_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
 #define SERVO_MIN 550
@@ -103,11 +133,10 @@ int main(void)
 #define ANGLE_MIN 70
 #define ANGLE_MAX 110
 
-#include "pca9685.h"
 #define SERVO_COUNT	12
 uint8_t ActiveServo;
 void SystemClock_Config(void);
-
+HAL_TIM_Base_Start_IT(&htim2);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -120,10 +149,10 @@ void SystemClock_Config(void);
 //		(s10)--(s9)______(s0)--(s1)
 //			  |			     |
 //			  |			     |
+//			  |		STM	     |
 //			  |			     |
 //			  |			     |
-//			  |			     |
-//			  |			     |
+//			  |		PCA      |
 //		(s7 )--(s6)______(s3)--(s4)
 //		|						  |
 //		|						  |
@@ -135,128 +164,109 @@ void SystemClock_Config(void);
 
 // NOGA - A
 PCA9685_Init(&hi2c1);
-PCA9685_SetServoAngle(0, 90);
-PCA9685_SetServoAngle(1, 90);
-PCA9685_SetServoAngle(2, 90);
-
-// NOGA - B
-PCA9685_SetServoAngle(3, 90);
-PCA9685_SetServoAngle(4, 90);
-PCA9685_SetServoAngle(5, 90);
-
-// NOGA - C
-PCA9685_SetServoAngle(6, 90);
-PCA9685_SetServoAngle(7, 90);
-PCA9685_SetServoAngle(8, 90);
-
-// NOGA - D
-PCA9685_SetServoAngle(9, 90);
-PCA9685_SetServoAngle(10, 90);
-PCA9685_SetServoAngle(11, 90);
-
-HAL_Delay(2000);
-ActiveServo=2;
+set_default_value();
 
 
 
-#define SERVO_DELAY 100
-#define SERVO_DELAY2 100
+
+//#define SERVO_DELAY 100
+//#define SERVO_DELAY2 100
 
 
+// Czlapanie
+//for (uint8_t var = 0; var < 5; ++var) {
+//for (uint8_t Angle = 90; Angle < 125; Angle++) {
+//	  if (Angle<=90+24) {
+//		  PCA9685_SetServoAngle(4, Angle);
+//	  }if (Angle<=90+34) {
+//		  PCA9685_SetServoAngle(5, Angle);
+//	  }
+//}
+//for (uint8_t Angle = 90; Angle > 55; Angle--) {
+//	  if (Angle>=90-24) {
+//		  PCA9685_SetServoAngle(10, Angle);
+//	  }if (Angle>=90-34) {
+//		  PCA9685_SetServoAngle(11, Angle);
+//	  }
+//}
+//HAL_Delay(SERVO_DELAY);
+//
+//for (uint8_t Angle = 125; Angle > 90; Angle--) {
+//	  if (Angle<=90+24) {
+//		  PCA9685_SetServoAngle(4, Angle);
+//	  }if (Angle<=90+34) {
+//		  PCA9685_SetServoAngle(5, Angle);
+//	  }
+//}
+//for (uint8_t Angle = 55; Angle < 90; Angle++) {
+//	  if (Angle>=90-24) {
+//		  PCA9685_SetServoAngle(10, Angle);
+//	  }if (Angle>=90-34) {
+//		  PCA9685_SetServoAngle(11, Angle);
+//	  }
+//}
+//HAL_Delay(SERVO_DELAY2);
+//
+//for (uint8_t Angle = 90; Angle < 125; Angle++) {
+//	  if (Angle<=90+24) {
+//		  PCA9685_SetServoAngle(1, Angle);
+//	  }if (Angle<=90+34) {
+//		  PCA9685_SetServoAngle(2, Angle);
+//	  }
+//}
+//for (uint8_t Angle = 90; Angle > 55; Angle--) {
+//	  if (Angle>=90-24) {
+//		  PCA9685_SetServoAngle(7, Angle);
+//	  }if (Angle>=90-34) {
+//		  PCA9685_SetServoAngle(8, Angle);
+//	  }
+//}
+//HAL_Delay(SERVO_DELAY);
+//
+//for (uint8_t Angle = 125; Angle > 90; Angle--) {
+//	  if (Angle<=90+24) {
+//		  PCA9685_SetServoAngle(1, Angle);
+//	  }if (Angle<=90+34) {
+//		  PCA9685_SetServoAngle(2, Angle);
+//	  }
+//}
+//for (uint8_t Angle = 55; Angle < 90; Angle++) {
+//	  if (Angle>=90-24) {
+//		  PCA9685_SetServoAngle(7, Angle);
+//	  }if (Angle>=90-34) {
+//		  PCA9685_SetServoAngle(8, Angle);
+//	  }
+//}
+//HAL_Delay(SERVO_DELAY2);
+//
+//}
 
-for (uint8_t var = 0; var < 5; ++var) {
-for (uint8_t Angle = 90; Angle < 125; Angle++) {
-	  if (Angle<=90+24) {
-		  PCA9685_SetServoAngle(4, Angle);
-	  }if (Angle<=90+34) {
-		  PCA9685_SetServoAngle(5, Angle);
-	  }
-}
-for (uint8_t Angle = 90; Angle > 55; Angle--) {
-	  if (Angle>=90-24) {
-		  PCA9685_SetServoAngle(10, Angle);
-	  }if (Angle>=90-34) {
-		  PCA9685_SetServoAngle(11, Angle);
-	  }
-}
-HAL_Delay(SERVO_DELAY);
-
-for (uint8_t Angle = 125; Angle > 90; Angle--) {
-	  if (Angle<=90+24) {
-		  PCA9685_SetServoAngle(4, Angle);
-	  }if (Angle<=90+34) {
-		  PCA9685_SetServoAngle(5, Angle);
-	  }
-}
-for (uint8_t Angle = 55; Angle < 90; Angle++) {
-	  if (Angle>=90-24) {
-		  PCA9685_SetServoAngle(10, Angle);
-	  }if (Angle>=90-34) {
-		  PCA9685_SetServoAngle(11, Angle);
-	  }
-}
-HAL_Delay(SERVO_DELAY2);
-
-for (uint8_t Angle = 90; Angle < 125; Angle++) {
-	  if (Angle<=90+24) {
-		  PCA9685_SetServoAngle(1, Angle);
-	  }if (Angle<=90+34) {
-		  PCA9685_SetServoAngle(2, Angle);
-	  }
-}
-for (uint8_t Angle = 90; Angle > 55; Angle--) {
-	  if (Angle>=90-24) {
-		  PCA9685_SetServoAngle(7, Angle);
-	  }if (Angle>=90-34) {
-		  PCA9685_SetServoAngle(8, Angle);
-	  }
-}
-HAL_Delay(SERVO_DELAY);
-
-for (uint8_t Angle = 125; Angle > 90; Angle--) {
-	  if (Angle<=90+24) {
-		  PCA9685_SetServoAngle(1, Angle);
-	  }if (Angle<=90+34) {
-		  PCA9685_SetServoAngle(2, Angle);
-	  }
-}
-for (uint8_t Angle = 55; Angle < 90; Angle++) {
-	  if (Angle>=90-24) {
-		  PCA9685_SetServoAngle(7, Angle);
-	  }if (Angle>=90-34) {
-		  PCA9685_SetServoAngle(8, Angle);
-	  }
-}
-HAL_Delay(SERVO_DELAY2);
-
-}
-
-HAL_Delay(1000);
-// NOGA - A
-PCA9685_SetServoAngle(0, 90);
-PCA9685_SetServoAngle(1, 90);
-PCA9685_SetServoAngle(2, 90);
-
-// NOGA - B
-PCA9685_SetServoAngle(3, 90);
-PCA9685_SetServoAngle(4, 90);
-PCA9685_SetServoAngle(5, 90);
-
-// NOGA - C
-PCA9685_SetServoAngle(6, 90);
-PCA9685_SetServoAngle(7, 90);
-PCA9685_SetServoAngle(8, 90);
-
-// NOGA - D
-PCA9685_SetServoAngle(9, 90);
-PCA9685_SetServoAngle(10, 90);
-PCA9685_SetServoAngle(11, 90);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
+	  // Odczyt stanu przycisku
+	    if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port, USER_BUTTON_Pin) == GPIO_PIN_RESET)
+	    {
+	      // Sprawdzenie, czy przycisk był wcześniej wciśnięty i czy od ostatniego wciśnięcia minął czas debouncingu
+	      if ((HAL_GetTick() - last_button_press >= 30) )
+	      {
+	        last_button_press = HAL_GetTick(); // Zaktualizuj czas ostatniego wciśnięcia
+	        if (mode==1) {
+				mode=0;
+			}else
+				mode=1;
+
+	      }
+	    }
+	    if (mode==0) {
+
+		}if (mode==1) {
+
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -358,15 +368,14 @@ static void MX_TIM2_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 83;
+  htim2.Init.Prescaler = 8399;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 20000;
+  htim2.Init.Period = 999;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -378,28 +387,15 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 1000;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
-  HAL_TIM_MspPostInit(&htim2);
 
 }
 
@@ -456,11 +452,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : B1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin;
+  /*Configure GPIO pin : USER_BUTTON_Pin */
+  GPIO_InitStruct.Pin = USER_BUTTON_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(USER_BUTTON_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LD2_Pin */
   GPIO_InitStruct.Pin = LD2_Pin;
