@@ -71,29 +71,21 @@ uint32_t last_button_press = 0; // Zmienna przechowująca czas ostatniego naciś
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim2) {
-
 	  if (mode==0) {
 		  angle_def=0;
-//		  Zakladam, ze jest sytuacja dla mode=1
+//		  Zakladam, ze na poczatku po uruchomieniu zasilania jest sytuacja dla mode=1
 		  if (angle<=45)
 		  {
 //		  PCA9685_SetServoAngle(0, DEFAULT_ANGLE);	// Serwa, ktorych puki co nie uzywamy (s0,s3,s6,s9)
 		  PCA9685_SetServoAngle(3, DEFAULT_ANGLE);	// Bo skupiamy sie na sterowaniu nogami w 2D
 		  PCA9685_SetServoAngle(6, DEFAULT_ANGLE);
-
+//		  PCA9685_SetServoAngle(9, DEFAULT_ANGLE); 	// WYJATEK: przy bazowaniu s0 i s9 uzywam, zeby robot mniej zajmowal w pudelku
 		  PCA9685_SetServoAngle(0, 0+angle*2);
 		  PCA9685_SetServoAngle(9, 180-angle*2);
-
 		  PCA9685_SetServoAngle(1, angle*2);
 		  PCA9685_SetServoAngle(2, 67.5+angle*0.5);
-
-		  if (angle<=30) {
-		  PCA9685_SetServoAngle(4, 120-angle);
-		  }
-		  if (angle<=37) {
-			  PCA9685_SetServoAngle(7, 53+angle);
-		  }
-		  PCA9685_SetServoAngle(7, 45+angle);
+		  if (angle<=30) {PCA9685_SetServoAngle(4, 120-angle);} // rozne wartosci przez niesymetrycznosc od strony sprzetu
+		  if (angle<=37) {PCA9685_SetServoAngle(7, 53+angle);}	//
 
 		  PCA9685_SetServoAngle(5, 157.5-angle*1.5);
 		  PCA9685_SetServoAngle(8, 22.5+angle*1.5);
@@ -103,33 +95,28 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		  angle++;
 		  }
 	  }
-	  if (mode==1) {
-		  angle=0;
+	  if (mode==1)
+	  {
+		  angle=0; // naprzemienne zerowanie angle i angle_def
 		  if (angle_def<=45){
 			  PCA9685_SetServoAngle(0, DEFAULT_ANGLE-angle_def*2);
 			  PCA9685_SetServoAngle(9, DEFAULT_ANGLE+angle_def*2);
 
 
-			  PCA9685_SetServoAngle(1, DEFAULT_ANGLE-angle_def*2);	//end_angle=0
-			  PCA9685_SetServoAngle(2, DEFAULT_ANGLE-angle_def*0.5);	//end_angle=45
+			  PCA9685_SetServoAngle(1, DEFAULT_ANGLE-angle_def*2);			//end_angle=0
+			  PCA9685_SetServoAngle(2, DEFAULT_ANGLE-angle_def*0.5);		//end_angle=67.5
 
-			  if (angle_def<=30) {
-				  PCA9685_SetServoAngle(4, DEFAULT_ANGLE+angle_def);	//end_angle=135
-			}if (angle_def<=37) {
-				  PCA9685_SetServoAngle(7, DEFAULT_ANGLE-angle_def);	//end_angle=45
+			  if (angle_def<=30) {PCA9685_SetServoAngle(4, DEFAULT_ANGLE+angle_def);}	//end_angle=120
+			  if (angle_def<=37) {PCA9685_SetServoAngle(7, DEFAULT_ANGLE-angle_def);}	//end_angle=53
+			  PCA9685_SetServoAngle(5, DEFAULT_ANGLE+angle_def*1.5);		//end_angle=157,5
+			  PCA9685_SetServoAngle(8, DEFAULT_ANGLE-angle_def*1.5);		//end_angle=22,5
 
-			}
-			  PCA9685_SetServoAngle(5, DEFAULT_ANGLE+angle_def*1.5);//end_angle=157,5
-			  PCA9685_SetServoAngle(8, DEFAULT_ANGLE-angle_def*1.5);//end_angle=22,5
-
-			  PCA9685_SetServoAngle(10, DEFAULT_ANGLE+angle_def*2);	//end_angle=180
-			  PCA9685_SetServoAngle(11, DEFAULT_ANGLE+angle_def*0.5);	//end_angle=135
+			  PCA9685_SetServoAngle(10, DEFAULT_ANGLE+angle_def*2);			//end_angle=180
+			  PCA9685_SetServoAngle(11, DEFAULT_ANGLE+angle_def*0.5);		//end_angle=112.5
 			  angle_def++;
 		  }
 	}
-//    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   }
-//	  angle++;
 }
 /* USER CODE END 0 */
 
