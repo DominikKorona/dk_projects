@@ -48,6 +48,12 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
+uint8_t angle;
+uint8_t angle_def;
+uint8_t mode = 0;
+uint32_t last_button_press = 0; // Zmienna przechowująca czas ostatniego naciśnięcia przycisku
+uint8_t flag = 1; // flaga do jednorazowego odpalenia mode==2, bo nie chcialo mi sie do timera juz tego wkladac tylko do petli while dalem funkcje "czlapania"
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,12 +69,6 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 #include "pca9685.h"
-
-uint8_t angle;
-uint8_t angle_def;
-uint8_t mode = 0;
-uint32_t last_button_press = 0; // Zmienna przechowująca czas ostatniego naciśnięcia przycisku
-uint8_t flag = 1; // flaga do jednorazowego odpalenia mode==2, bo nie chcialo mi sie do timera juz tego wkladac tylko do petli while dalem funkcje "czlapania"
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim2) {
@@ -98,7 +98,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  }
 	  if (mode==1)
 	  {
-		  angle=0; // naprzemienne zerowanie angle i angle_def
+		  angle=0; // zerowanie potrzebne po to, aby jeszcze raz ruch wykonac przy kolejnych przelaczaniach trybow
 		  if (angle_def<=45){
 			  PCA9685_SetServoAngle(0, DEFAULT_ANGLE-angle_def*2);
 			  PCA9685_SetServoAngle(9, DEFAULT_ANGLE+angle_def*2);
@@ -154,13 +154,6 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-#define SERVO_MIN 550
-#define SERVO_MAX 2430
-#define ANGLE_MIN 70
-#define ANGLE_MAX 110
-
-#define SERVO_COUNT	12
-uint8_t ActiveServo;
 void SystemClock_Config(void);
 HAL_TIM_Base_Start_IT(&htim2);
 
@@ -187,14 +180,6 @@ PCA9685_Init(&hi2c1);
 PCA9685_SetServoAngle(3, DEFAULT_ANGLE);	// Bo skupiamy sie na sterowaniu nogami w 2D
 PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do skladania robota
 //PCA9685_SetServoAngle(9, DEFAULT_ANGLE);
-
-
-#define SERVO_DELAY 100
-#define SERVO_DELAY2 100
-
-
-
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -203,6 +188,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
   while (1)
   {
 	  // Odczyt stanu przycisku - tutaj uzylem prostego sposobu na zminimalizowanie tzw. Debouncingu (drgań styków w przyciskach)
+	  // 						  ale i tak czasem po 3 razy "mode" mi inkrementuje
 	    if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port, USER_BUTTON_Pin) == GPIO_PIN_RESET)
 	    {
 	      // Sprawdzenie, czy przycisk był wcześniej wciśnięty i czy od ostatniego wciśnięcia minął czas debouncingu
@@ -210,17 +196,21 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
 	      {
 	        last_button_press = HAL_GetTick(); // Zaktualizuj czas ostatniego wcisniecia
 	        mode++;
+
 	        if (mode==2) {
-				flag=1;// to na szybko, to wymiany
+				flag=1;// to na szybko flaga do ponownego korzystania z chodzenia w petli while, sredni sposob ale dziala xd
 			}
 	        if (mode > 2) {
 				mode = 0;
 			}
-//	        else
-//				mode=1;
 	      }
 	    }
-
+ /*
+  * generalnie jak w timerach robilem, to do timera tez pasuje to dodac,
+  * na szybko to robilem to jest jak jest, z reguly nie powinno sie dodawac do timerow
+  * funkcji blokujacych typu HAL_DELAY i chyba petle for, ale to tez mozna obserwowac jak
+  * sie uklad zachowuje
+ */
 	    if (mode==2 && flag) {
 		PCA9685_SetServoAngle(0, DEFAULT_ANGLE);	// to pasuje dodac, zeby z pozycji lezacej nie kopal
 		PCA9685_SetServoAngle(9, DEFAULT_ANGLE);
@@ -239,7 +229,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
 	    			  PCA9685_SetServoAngle(11, Angle);
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY);
+	    	HAL_Delay(100);
 
 	    	for (uint8_t Angle = 125; Angle > 90; Angle--) {
 	    		  if (Angle<=90+24) {
@@ -255,7 +245,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
 	    			  PCA9685_SetServoAngle(11, Angle);
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY2);
+	    	HAL_Delay(100);
 
 	    	for (uint8_t Angle = 90; Angle < 125; Angle++) {
 	    		  if (Angle<=90+24) {
@@ -271,7 +261,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
 	    			  PCA9685_SetServoAngle(8, Angle);
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY);
+	    	HAL_Delay(100);
 
 	    	for (uint8_t Angle = 125; Angle > 90; Angle--) {
 	    		  if (Angle<=90+24) {
@@ -287,7 +277,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
 	    			  PCA9685_SetServoAngle(8, Angle);
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY2);
+	    	HAL_Delay(100);
 
 	    	}flag=0;
 		}

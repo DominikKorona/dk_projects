@@ -29,23 +29,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .comment      00000043  00000000  00000000  00020040  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0000f4ad  00000000  00000000  00020083  2**0
+ 13 .debug_info   0000f49f  00000000  00000000  00020083  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00001e6d  00000000  00000000  0002f530  2**0
+ 14 .debug_abbrev 00001e5e  00000000  00000000  0002f522  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00000eb0  00000000  00000000  000313a0  2**3
+ 15 .debug_aranges 00000eb0  00000000  00000000  00031380  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00000baf  00000000  00000000  00032250  2**0
+ 16 .debug_rnglists 00000baf  00000000  00000000  00032230  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00016897  00000000  00000000  00032dff  2**0
+ 17 .debug_macro  00016866  00000000  00000000  00032ddf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   000113fc  00000000  00000000  00049696  2**0
+ 18 .debug_line   000113fc  00000000  00000000  00049645  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000908e2  00000000  00000000  0005aa92  2**0
+ 19 .debug_str    0009086e  00000000  00000000  0005aa41  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00004178  00000000  00000000  000eb374  2**2
+ 20 .debug_frame  00004178  00000000  00000000  000eb2b0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000007e  00000000  00000000  000ef4ec  2**0
+ 21 .debug_line_str 0000007e  00000000  00000000  000ef428  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1167,10 +1167,10 @@ Disassembly of section .text:
  8000e5e:	bf00      	nop
 
 08000e60 <HAL_TIM_PeriodElapsedCallback>:
-uint8_t angle_def;
-uint8_t mode = 0;
-uint32_t last_button_press = 0; // Zmienna przechowująca czas ostatniego naciśnięcia przycisku
-uint8_t flag = 1; // flaga do jednorazowego odpalenia mode==2, bo nie chcialo mi sie do timera juz tego wkladac tylko do petli while dalem funkcje "czlapania"
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+#include "pca9685.h"
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
  8000e60:	b580      	push	{r7, lr}
@@ -1381,7 +1381,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
  800104a:	2b01      	cmp	r3, #1
  800104c:	f040 80fc 	bne.w	8001248 <HAL_TIM_PeriodElapsedCallback+0x3e8>
 	  {
-		  angle=0; // naprzemienne zerowanie angle i angle_def
+		  angle=0; // zerowanie potrzebne po to, aby jeszcze raz ruch wykonac przy kolejnych przelaczaniach trybow
  8001050:	4b58      	ldr	r3, [pc, #352]	; (80011b4 <HAL_TIM_PeriodElapsedCallback+0x354>)
  8001052:	2200      	movs	r2, #0
  8001054:	701a      	strb	r2, [r3, #0]
@@ -1624,10 +1624,8 @@ int main(void)
  8001272:	f000 f9f9 	bl	8001668 <MX_I2C1_Init>
   MX_TIM2_Init();
  8001276:	f000 fa25 	bl	80016c4 <MX_TIM2_Init>
-#define ANGLE_MAX 110
+  /* USER CODE BEGIN 2 */
 
-#define SERVO_COUNT	12
-uint8_t ActiveServo;
 void SystemClock_Config(void);
 HAL_TIM_Base_Start_IT(&htim2);
  800127a:	48a7      	ldr	r0, [pc, #668]	; (8001518 <main+0x2bc>)
@@ -1649,11 +1647,11 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  8001290:	ed9f 0aa3 	vldr	s0, [pc, #652]	; 8001520 <main+0x2c4>
  8001294:	2006      	movs	r0, #6
  8001296:	f000 fcbb 	bl	8001c10 <PCA9685_SetServoAngle>
-  /* USER CODE BEGIN WHILE */
 
   while (1)
   {
 	  // Odczyt stanu przycisku - tutaj uzylem prostego sposobu na zminimalizowanie tzw. Debouncingu (drgań styków w przyciskach)
+	  // 						  ale i tak czasem po 3 razy "mode" mi inkrementuje
 	    if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port, USER_BUTTON_Pin) == GPIO_PIN_RESET)
  800129a:	f44f 5100 	mov.w	r1, #8192	; 0x2000
  800129e:	48a1      	ldr	r0, [pc, #644]	; (8001524 <main+0x2c8>)
@@ -1684,12 +1682,13 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  80012ca:	b2da      	uxtb	r2, r3
  80012cc:	4b97      	ldr	r3, [pc, #604]	; (800152c <main+0x2d0>)
  80012ce:	701a      	strb	r2, [r3, #0]
+
 	        if (mode==2) {
  80012d0:	4b96      	ldr	r3, [pc, #600]	; (800152c <main+0x2d0>)
  80012d2:	781b      	ldrb	r3, [r3, #0]
  80012d4:	2b02      	cmp	r3, #2
  80012d6:	d102      	bne.n	80012de <main+0x82>
-				flag=1;// to na szybko, to wymiany
+				flag=1;// to na szybko flaga do ponownego korzystania z chodzenia w petli while, sredni sposob ale dziala xd
  80012d8:	4b95      	ldr	r3, [pc, #596]	; (8001530 <main+0x2d4>)
  80012da:	2201      	movs	r2, #1
  80012dc:	701a      	strb	r2, [r3, #0]
@@ -1703,11 +1702,11 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  80012e6:	4b91      	ldr	r3, [pc, #580]	; (800152c <main+0x2d0>)
  80012e8:	2200      	movs	r2, #0
  80012ea:	701a      	strb	r2, [r3, #0]
-//	        else
-//				mode=1;
-	      }
-	    }
-
+  * generalnie jak w timerach robilem, to do timera tez pasuje to dodac,
+  * na szybko to robilem to jest jak jest, z reguly nie powinno sie dodawac do timerow
+  * funkcji blokujacych typu HAL_DELAY i chyba petle for, ale to tez mozna obserwowac jak
+  * sie uklad zachowuje
+ */
 	    if (mode==2 && flag) {
  80012ec:	4b8f      	ldr	r3, [pc, #572]	; (800152c <main+0x2d0>)
  80012ee:	781b      	ldrb	r3, [r3, #0]
@@ -1799,7 +1798,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  80013a0:	d8df      	bhi.n	8001362 <main+0x106>
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY);
+	    	HAL_Delay(100);
  80013a2:	2064      	movs	r0, #100	; 0x64
  80013a4:	f000 fe66 	bl	8002074 <HAL_Delay>
 
@@ -1873,7 +1872,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  8001432:	d9df      	bls.n	80013f4 <main+0x198>
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY2);
+	    	HAL_Delay(100);
  8001434:	2064      	movs	r0, #100	; 0x64
  8001436:	f000 fe1d 	bl	8002074 <HAL_Delay>
 
@@ -1947,7 +1946,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  80014c4:	d8df      	bhi.n	8001486 <main+0x22a>
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY);
+	    	HAL_Delay(100);
  80014c6:	2064      	movs	r0, #100	; 0x64
  80014c8:	f000 fdd4 	bl	8002074 <HAL_Delay>
 
@@ -2028,7 +2027,7 @@ PCA9685_SetServoAngle(6, DEFAULT_ANGLE);	// Serwa tylnie s0 i s9 uzywam tylko do
  8001572:	d9df      	bls.n	8001534 <main+0x2d8>
 	    		  }
 	    	}
-	    	HAL_Delay(SERVO_DELAY2);
+	    	HAL_Delay(100);
  8001574:	2064      	movs	r0, #100	; 0x64
  8001576:	f000 fd7d 	bl	8002074 <HAL_Delay>
 		for (uint8_t var = 0; var < 5; ++var) {
