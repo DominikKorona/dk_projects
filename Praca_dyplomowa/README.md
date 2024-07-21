@@ -1,20 +1,6 @@
-# CzlapCzlap_Elektronika
-Aktualny schemat mini-doga z modelem 3D
+# Development of an OLED display support library for embedded systems
 
-![image](https://github.com/KN-Integra/CzlapCzlap_Elektronika/assets/81295903/3972a888-2782-45cd-b371-36d1aef1fcc1)
-
-Płytka PCB z przetwornicami
-
-![image](https://github.com/KN-Integra/CzlapCzlap_Elektronika/assets/81295903/ccce3675-f7f7-4ff5-b753-6117a2a0ae92)
-
-Płytka PCB w widoku 3D
-
-![image](https://github.com/KN-Integra/CzlapCzlap_Elektronika/assets/81295903/a88082ed-dd79-47bd-9b38-715a3239f443)
-
-Wymiary z poligonem
-
-![image](https://github.com/KN-Integra/CzlapCzlap_Elektronika/assets/81295903/eae2ca77-b514-4101-8da9-6a3251504bab)
-
-
-
-
+W tym repozytorium umieszczono pliki, które zostały wykorzystane podczas projektu inżynierskiego. W folderze #LCD_Image_Converter_templates# umieszczono szablony w wykorzystywanym programie do generacji czcionek systemowych, obrazków czy własnych grafik. Przykładowe grafiki stworzone w programie #LCD Image Converter# przedstawiono poniżej.
+![image](https://github.com/user-attachments/assets/238fb10d-7a37-4f48-9831-4c921d9f5f18)
+Program w wygodny sposób dokonuje konwersji z siatki pikseli na mapę bitową, którą odczytywano przy użyciu języka C w projekcie.
+![image](https://github.com/user-attachments/assets/2ec55a22-7708-4b03-8c82-befa90d4d7fc)
