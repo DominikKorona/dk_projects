@@ -8,7 +8,7 @@ W użytym programie w wygodny sposób dokonuje się konwersji z wczytanej czcion
 <img src="https://github.com/user-attachments/assets/2ec55a22-7708-4b03-8c82-befa90d4d7fc" width="700" alt="image">
 
 Główna część projektu znajduje się w pliku *OLED_Universal*, w którym zawarto wszystkie pliki konfiguracyjne. Projekt wykonano na module STM32f411RE oraz dwóch wyświetlaczach OLED ze sterownikami *SSD1306* oraz *SH1106*. W pierszym wyświetlaczu skupiono się na komunikacji przy pomocy interfejsu I2C, natomiast w drugim SPI. W ramach rozwoju projektu, zaimplementowano na obydwu wyświetlaczach mechanizm DMA.
-#Struktura projektu
+# Struktura projektu
 ```bash
 Core
 ├── Inc
