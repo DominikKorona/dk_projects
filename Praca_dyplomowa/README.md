@@ -9,6 +9,7 @@ W użytym programie w wygodny sposób dokonuje się konwersji z wczytanej czcion
 
 Główna część projektu znajduje się w pliku *OLED_Universal*, w którym zawarto wszystkie pliki konfiguracyjne. Projekt wykonano na module STM32f411RE oraz dwóch wyświetlaczach OLED ze sterownikami *SSD1306* oraz *SH1106*. W pierszym wyświetlaczu skupiono się na komunikacji przy pomocy interfejsu I2C, natomiast w drugim SPI. W ramach rozwoju projektu, zaimplementowano na obydwu wyświetlaczach mechanizm DMA.
 #Struktura projektu
+```bash
 Core
 ├── Inc
 │ ├── oled_Functions.h
@@ -22,7 +23,7 @@ Core
 ├── oled_Comm.c
 ├── oled_Arial8pt.c
 └── oled_ArialBold13pt.c
-
+```
 Celem "tak rozbudowanej" struktury plików było to, aby dokonywanie zmian w projekcie, zdeterminowanych np. zmianą wyświetlacza było jak najprostrze. 
 * Pliki *oled_Functions.h/.c* zawierają funkcje tworzące grafikę w postaci pojedynczych pikseli, lini, figur czy też  na mapach bitowych generowanych we wcześniej wymienionym programie.
 * Pliki *oled_Init.h/.c* zawierają sekwencje inicjalizacyjne wyświetlaczy, bufor GRAM zawierający informacje do bezpośredniego przekazania do wyświetlacza, funkcje Callback od DMA i funkcje odświerzania ekranu.
@@ -31,4 +32,5 @@ Celem "tak rozbudowanej" struktury plików było to, aby dokonywanie zmian w pro
 Poniżej przedstawiono przykładowe wykorzystanie wyświetlaczy:
 
 <img src="https://github.com/user-attachments/assets/9b18b531-f378-44c7-a8ae-dcb7d77f19b2" width="500" alt="image">
+
 <img src="https://github.com/user-attachments/assets/5115cfd4-aea8-4a25-a3ce-d5f6f99c4c34" width="500" alt="image">
