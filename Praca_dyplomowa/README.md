@@ -10,7 +10,7 @@ W użytym programie w wygodny sposób dokonuje się konwersji z wczytanej czcion
 Główna część projektu znajduje się w pliku *OLED_Universal*, w którym zawarto wszystkie pliki konfiguracyjne. Projekt wykonano na module STM32f411RE oraz dwóch wyświetlaczach OLED ze sterownikami *SSD1306* oraz *SH1106*. W pierszym wyświetlaczu skupiono się na komunikacji przy pomocy interfejsu I2C, natomiast w drugim SPI. W ramach rozwoju projektu, zaimplementowano na obydwu wyświetlaczach mechanizm DMA.
 
 Głównym celem projektu było zaimplementowanie uniwersalnej biblioteki do wyświetlaczy OLED w taki sposób, aby możliwie łatwo można było podmieniać wyświetlacze z różnymi parametrami, dlatego pliki rozdzielono na kilka modułów, opisanych w strukturze projektu poniżej.
-# Struktura projektu
+## Struktura projektu
 ```bash
 Core
 ├── Inc
