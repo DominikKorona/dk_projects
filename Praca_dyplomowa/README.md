@@ -33,5 +33,6 @@ Poniżej przedstawiono przykładowe wykorzystanie wyświetlaczy:
 
 <img src="https://github.com/user-attachments/assets/9b18b531-f378-44c7-a8ae-dcb7d77f19b2" width="500" alt="image">
 
+<br>
 
 <img src="https://github.com/user-attachments/assets/5115cfd4-aea8-4a25-a3ce-d5f6f99c4c34" width="500" alt="image">
