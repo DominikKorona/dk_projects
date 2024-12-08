@@ -11,7 +11,7 @@ cX=0
 time.sleep(2)
 
 image = picam2.capture_array()
-cv2.imwrite('/home/roosterpi/Documents/Github/ZZUM_laboratorium/cam_/lf_original_image.jpg', image)
+cv2.imwrite('/home/roosterpi/Documents/Github/dk_projects/ZZUM_laboratorium/cam_/lf_original_image.jpg', image)
 
 try:
     while True:
@@ -68,14 +68,14 @@ try:
 
 
                 
-            cv2.imwrite('/home/robodog/Dokumenty/ZZUM/cam_/lf_dilates.jpg', dilated_edges)
+            cv2.imwrite('/home/roosterpi/Documents/Github/dk_projects/ZZUM_laboratorium/cam_/lf_dilates.jpg', dilated_edges)
             # #D
             # # Narysowanie środka ciężkości na obrazie
             # output_img = cropped_img.copy()  # Tworzymy kopię, aby nie modyfikować oryginału
             # cv2.circle(output_img, (cX, cY), 10, (0, 255, 0), -1)  # Zielony punkt
 
             # # Nadpisanie obrazu z oznaczonym środkiem ciężkości
-            filename = "/home/robodog/Dokumenty/ZZUM/cam_/cropped_image_with_centroid.jpg"
+            # filename = "/home/robodog/Dokumenty/ZZUM/cam_/cropped_image_with_centroid.jpg"
             # cv2.imwrite(filename, output_img)
             # # print(f"Zapisano obraz: {filename}")
         else:
