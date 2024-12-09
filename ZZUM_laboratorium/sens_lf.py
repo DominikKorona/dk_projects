@@ -14,9 +14,9 @@ NUM_SENSORS = 5
 PWM_PIN_A = 12  # GPIO __ (PWM0)
 PWM_PIN_B = 13  # GPIO __ (PWM1)
 AO1 = 25
-AO2 = 9
-BO1 = 1
-BO2 = 7
+AO2 = 11
+BO1 = 7
+BO2 = 8
 
 # Inicjalizacja GPIO
 GPIO.setmode(GPIO.BCM)
@@ -65,7 +65,7 @@ def main():
         
         # set_motors(100, 100) # Prawy
         # set_motors(200, 0) # Prawy
-        set_motors(0, 200) # Lewy
+        set_motors(150, 150) # Lewy
 
         time.sleep(0.01)  # Małe opóźnienie w pętli
 

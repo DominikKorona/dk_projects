@@ -1,0 +1,3 @@
+Bezpieczne wylaczanie raspberry pi
+
+sudo shutdown -h now
