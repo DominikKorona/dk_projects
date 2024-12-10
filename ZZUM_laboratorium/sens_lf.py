@@ -111,6 +111,7 @@ def read_line(min_values, max_values):
         max(0, min(1000, 1000 * (raw_values[i] - min_values[i]) // (max_values[i] - min_values[i] + 1)))
         for i in range(NUM_SENSORS)
     ]
+    print(normalized)
     if DEBUG:
         print("Raw values:", raw_values)
         print("Normalized values:", normalized)
