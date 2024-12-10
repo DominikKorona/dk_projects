@@ -2,17 +2,17 @@ import RPi.GPIO as GPIO
 import time
 
 # Stałe PID i prędkości silników
-KP = 3
+KP = 4
 KD = 4
 M1_minimum_speed = 100
 M2_minimum_speed = 100
-M1_maximum_speed = 200
-M2_maximum_speed = 200
+M1_maximum_speed = 250
+M2_maximum_speed = 250
 NUM_SENSORS = 5  # liczba używanych czujników
 TIMEOUT = 0.0025  # 2500 us w sekundach
 DEBUG = False
 
-# Piny GPIO (ustaw według podłączenia na Raspberry Pi 4B)
+# Piny GPIO
 EMITTER_PIN = 2  # Sterowanie diodami IR (jeśli używane)
 PWM_pin_A = 12  # PWM dla pierwszego silnika
 AO1 = 25        # Kierunek pierwszego silnika
@@ -21,7 +21,7 @@ PWM_pin_B = 13  # PWM dla drugiego silnika
 BO1 = 7        # Kierunek drugiego silnika
 BO2 = 8
 
-# sensor_pins = [24, 23, 21, 20, 16, 26, 19, 18]  # Piny GPIO dla czujników (QTR-8RC)
+# Czujniki
 sensor_pins = [23, 21, 20, 16, 26]  # Piny GPIO dla czujników (QTR-8RC)
 
 # Konfiguracja GPIO
@@ -41,38 +41,47 @@ for pin in sensor_pins:
     GPIO.setup(pin, GPIO.OUT)
 
 # Inicjalizacja PWM
-pwm_A = GPIO.PWM(PWM_pin_A, 1000)  # PWM o częstotliwości 1kHz
-pwm_B = GPIO.PWM(PWM_pin_B, 1000)
+pwm_B = GPIO.PWM(PWM_pin_A, 1000)  # PWM o częstotliwości 1kHz
+pwm_A = GPIO.PWM(PWM_pin_B, 1000)
 pwm_A.start(0)
 pwm_B.start(0)
 
 
+def setup_pins():
+    for pin in sensor_pins:
+        GPIO.setup(pin, GPIO.OUT)
+        GPIO.output(pin, GPIO.LOW)
+    print("Piny GPIO zostały poprawnie skonfigurowane.")
+
+
 def read_sensors():
-    """Odczytuje wartości czujników QTR-8RC."""
-    values = []
-    # Ustaw wszystkie piny jako wyjście i ustaw na HIGH, aby naładować kondensatory
+    """Odczytuje wartości czujników."""
+    durations = [0] * len(sensor_pins)
+
+    # Ładowanie kondensatorów
     for pin in sensor_pins:
         GPIO.setup(pin, GPIO.OUT)
         GPIO.output(pin, GPIO.HIGH)
-    time.sleep(0.00001)  # 10 µs na naładowanie
+    time.sleep(0.01)
 
-    # Ustaw wszystkie piny jako wejście i mierz czas rozładowania
+    # Przełącz piny na wejścia
     start_time = time.time()
     for pin in sensor_pins:
         GPIO.setup(pin, GPIO.IN)
 
-    # Sprawdź, ile czasu potrzeba na rozładowanie
-    while time.time() - start_time < TIMEOUT:
-        elapsed_time = time.time() - start_time
+    while True:
+        all_done = True
+        current_time = time.time()
+        elapsed = (current_time - start_time) * 1000  # w milisekundach
         for i, pin in enumerate(sensor_pins):
-            if GPIO.input(pin) == GPIO.LOW and len(values) <= i:
-                values.append(elapsed_time)
+            if durations[i] == 0 and GPIO.input(pin) == GPIO.LOW:
+                durations[i] = elapsed
+            if durations[i] == 0:
+                all_done = False
+        if all_done or elapsed > TIMEOUT * 1000:  # Przerwij po czasie timeout
+            break
 
-    # Uzupełnij brakujące wartości, jeśli piny nie zdążyły przejść na LOW
-    while len(values) < NUM_SENSORS:
-        values.append(TIMEOUT)
-
-    return values
+    return durations
 
 
 def calibrate_sensors():
@@ -102,7 +111,9 @@ def read_line(min_values, max_values):
         max(0, min(1000, 1000 * (raw_values[i] - min_values[i]) // (max_values[i] - min_values[i] + 1)))
         for i in range(NUM_SENSORS)
     ]
-    print(raw_values)
+    if DEBUG:
+        print("Raw values:", raw_values)
+        print("Normalized values:", normalized)
 
     weighted_sum = sum(i * 1000 * val for i, val in enumerate(normalized))
     total = sum(normalized)
@@ -115,8 +126,8 @@ def set_motors(motor1speed, motor2speed):
     motor1speed = max(0, min(M1_maximum_speed, motor1speed))
     motor2speed = max(0, min(M2_maximum_speed, motor2speed))
 
-    pwm_A.ChangeDutyCycle(motor2speed / 255 * 100)
-    pwm_B.ChangeDutyCycle(motor1speed / 255 * 100)
+    pwm_A.ChangeDutyCycle(motor1speed / 255 * 100)
+    pwm_B.ChangeDutyCycle(motor2speed / 255 * 100)
 
     GPIO.output(AO1, GPIO.HIGH)
     GPIO.output(AO2, GPIO.LOW)
@@ -126,13 +137,13 @@ def set_motors(motor1speed, motor2speed):
 
 def main():
     try:
+        setup_pins()
         min_values, max_values = calibrate_sensors()
         last_error = 0
 
         while True:
             position, sensor_values = read_line(min_values, max_values)
             error = position - 2000
-            # print(error,"pos:", position)
 
             motor_speed = KP * error + KD * (error - last_error)
             last_error = error
