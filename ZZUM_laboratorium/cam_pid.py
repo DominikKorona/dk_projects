@@ -1,7 +1,44 @@
+import RPi.GPIO as GPIO
 import time
 from picamera2 import Picamera2
 import cv2
 import numpy as np
+
+
+# Stałe PID i prędkości silników
+KP = 3
+KD = 4
+M1_minimum_speed = 50
+M2_minimum_speed = 50
+M1_maximum_speed = 130
+M2_maximum_speed = 130
+# Piny GPIO
+EMITTER_PIN = 2  # Sterowanie diodami IR (jeśli używane)
+PWM_pin_A = 12  # PWM dla pierwszego silnika
+AO1 = 25        # Kierunek pierwszego silnika
+AO2 = 11
+PWM_pin_B = 13  # PWM dla drugiego silnika
+BO1 = 7        # Kierunek drugiego silnika
+BO2 = 8
+
+# Konfiguracja GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+# Konfiguracja pinów silników
+GPIO.setup(PWM_pin_A, GPIO.OUT)
+GPIO.setup(PWM_pin_B, GPIO.OUT)
+GPIO.setup(AO1, GPIO.OUT)
+GPIO.setup(AO2, GPIO.OUT)
+GPIO.setup(BO1, GPIO.OUT)
+GPIO.setup(BO2, GPIO.OUT)
+
+# Inicjalizacja PWM
+pwm_B = GPIO.PWM(PWM_pin_A, 1000)  # PWM o częstotliwości 1kHz
+pwm_A = GPIO.PWM(PWM_pin_B, 1000)
+pwm_A.start(0)
+pwm_B.start(0)
+
 
 # Inicjalizacja kamery
 picam2 = Picamera2()
@@ -13,6 +50,22 @@ time.sleep(2)
 image = picam2.capture_array()
 cv2.imwrite('/home/roosterpi/Documents/Github/dk_projects/ZZUM_laboratorium/cam_/lf_original_image.jpg', image)
 
+# Silniki
+
+def set_motors(motor1speed, motor2speed):
+    """Ustawienie prędkości silników."""
+    motor1speed = max(0, min(M1_maximum_speed, motor1speed))
+    motor2speed = max(0, min(M2_maximum_speed, motor2speed))
+
+    pwm_A.ChangeDutyCycle(motor1speed / 255 * 100)
+    pwm_B.ChangeDutyCycle(motor2speed / 255 * 100)
+
+    GPIO.output(AO1, GPIO.HIGH)
+    GPIO.output(AO2, GPIO.LOW)
+    GPIO.output(BO1, GPIO.HIGH)
+    GPIO.output(BO2, GPIO.LOW)
+
+# Kamera
 def write_images(img1=None, img2=None, centroid=False, cX=0, cY=0):
     if centroid==False:
         cv2.imwrite('/home/roosterpi/Documents/Github/dk_projects/ZZUM_laboratorium/cam_/lf_cropped.jpg', img1)
@@ -44,7 +97,7 @@ def search_for_contures():
     # Obliczanie średniej jasności obrazu
     mean_intensity = np.mean(gray_img)
     # Ustalanie progów w zależności od średniej jasności
-    lower_thresh = int(max(0, 0.66 * mean_intensity))
+    lower_thresh = int(max(0, 0.86 * mean_intensity))
     upper_thresh = int(min(255, 1.03 * mean_intensity))
 
     # Detekcja krawędzi (Canny) z dynamicznymi progami
@@ -80,7 +133,7 @@ def search_for_centroid(image):
     mean_intensity = np.mean(gray_img)
     # Ustalanie progów w zależności od średniej jasności
     lower_thresh = int(max(0, 0.66 * mean_intensity))
-    upper_thresh = int(min(255, 1.03 * mean_intensity))
+    upper_thresh = int(min(255, 1.33 * mean_intensity))
 
     # Detekcja krawędzi (Canny) z dynamicznymi progami
     edges = cv2.Canny(blurred_img, threshold1=lower_thresh, threshold2=upper_thresh)
@@ -114,21 +167,41 @@ def search_for_centroid(image):
         #print("Brak wykrytych konturów z niezerowym momentem.")
         #print(f"Poprzedni srodek: ({int(cX/6.4-50)})")
         pass
-    return int(cX/6.4-50)
+    return int(cX/6.4)
+
 
 try:
+    previous_pos = 0
+    last_error = 0
     while True:
-        image = picam2.capture_array()
         cX = search_for_centroid(image=image)
         print(f"Środek: ({cX})")    
-        # # TODO: Sterowanie silnikami
+        if cX<30 and previous_pos>90:
+            cX=98
+        image = picam2.capture_array()
+        # # TODO:Sterowanie silnikami
+        error = cX - 50
 
+        motor_speed = KP * error + KD * (error - last_error)
+        last_error = error
+
+        left_motor_speed = M1_minimum_speed + motor_speed
+        right_motor_speed = M2_minimum_speed - motor_speed
+
+        # set_motors(left_motor_speed, right_motor_speed)
+        # time.sleep(0.01)  # 10ms pętla
 
         # Interwał czasowy (np. 1 sekunda)
+        print("pos:",cX,"prev:",previous_pos,"error:",error,"motorspeed:", motor_speed)
+        previous_pos = cX
         time.sleep(1)
 
 except KeyboardInterrupt:
     print("Przerwano działanie programu.")
+    pwm_A.stop()
+    pwm_B.stop()
+    GPIO.cleanup()
+    print("\nProgram zatrzymany.")
 
 finally:
     # Zwolnienie zasobów kamery po zakończeniu

@@ -3,7 +3,7 @@ import time
 
 # Stałe PID i prędkości silników
 KP = 4
-KD = 4
+KD = 6
 M1_minimum_speed = 100
 M2_minimum_speed = 100
 M1_maximum_speed = 250
@@ -153,6 +153,7 @@ def main():
             right_motor_speed = M2_minimum_speed - motor_speed
 
             set_motors(left_motor_speed, right_motor_speed)
+            print("pos:",position,"error:",error,"motorspeed:", motor_speed)
             time.sleep(0.01)  # 10ms pętla
     except KeyboardInterrupt:
         pwm_A.stop()
