@@ -1,17 +1,29 @@
 import RPi.GPIO as GPIO
+# from picamera2 import Picamera2
 import time
 from picamera2 import Picamera2
 import cv2
 import numpy as np
 
+# Inicjalizacja kamery z wyższą rozdzielczością
+# camera = Picamera2()
+# camera.resolution = (1920, 1080)  # Full HD
+# camera.framerate = 30
+# camera.brightness = 60
+# camera.contrast = 50
+# time.sleep(2)
+# camera = cv2.VideoCapture(0)
+# camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+# camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
 
 # Stałe PID i prędkości silników
-KP = 3
-KD = 4
-M1_minimum_speed = 50
-M2_minimum_speed = 50
-M1_maximum_speed = 130
-M2_maximum_speed = 130
+KP = 4
+KD = 6
+M1_minimum_speed = 75
+M2_minimum_speed = 75
+M1_maximum_speed = 120
+M2_maximum_speed = 120
 # Piny GPIO
 EMITTER_PIN = 2  # Sterowanie diodami IR (jeśli używane)
 PWM_pin_A = 12  # PWM dla pierwszego silnika
@@ -79,6 +91,7 @@ def write_images(img1=None, img2=None, centroid=False, cX=0, cY=0):
 
 def search_for_contures():
     image = picam2.capture_array()
+    
 
     # Sprawdź wymiary obrazu
     height, width = image.shape[:2]
@@ -129,11 +142,15 @@ def search_for_centroid(image):
     # Filtracja przed binaryzacją (rozmycie Gaussa)
     blurred_img = cv2.GaussianBlur(gray_img, (9, 9), 0)
 
+
+    hist = cv2.calcHist([gray_img], [0], None, [256], [0, 256])
+    # cv2.imwrite('/home/roosterpi/Documents/Github/dk_projects/ZZUM_laboratorium/cam_/lf_hist.jpg', hist)
+
     # Obliczanie średniej jasności obrazu
     mean_intensity = np.mean(gray_img)
     # Ustalanie progów w zależności od średniej jasności
     lower_thresh = int(max(0, 0.66 * mean_intensity))
-    upper_thresh = int(min(255, 1.33 * mean_intensity))
+    upper_thresh = int(min(255, 1.03 * mean_intensity))
 
     # Detekcja krawędzi (Canny) z dynamicznymi progami
     edges = cv2.Canny(blurred_img, threshold1=lower_thresh, threshold2=upper_thresh)
@@ -148,7 +165,7 @@ def search_for_centroid(image):
     # Obliczenie łącznego momentu dla wszystkich konturów
     M_total = {'m00': 0, 'm10': 0, 'm01': 0}
 
-    write_images(cropped_img, dilated_edges)
+    # write_images(cropped_img, dilated_edges)
     for contour in contours:
         M = cv2.moments(contour)
         if M["m00"] > 0:
@@ -162,7 +179,7 @@ def search_for_centroid(image):
         cY = int(M_total["m01"] / M_total["m00"])
 
         #print(f"Środek: ({int(cX/6.4-50)})")
-        write_images(centroid=True, cX=cX, cY=cY + start_height)
+        # write_images(centroid=True, cX=cX, cY=cY + start_height)
     else:
         #print("Brak wykrytych konturów z niezerowym momentem.")
         #print(f"Poprzedni srodek: ({int(cX/6.4-50)})")
@@ -180,7 +197,7 @@ try:
             cX=98
         image = picam2.capture_array()
         # # TODO:Sterowanie silnikami
-        error = cX - 50
+        error = cX - 10
 
         motor_speed = KP * error + KD * (error - last_error)
         last_error = error
@@ -188,13 +205,13 @@ try:
         left_motor_speed = M1_minimum_speed + motor_speed
         right_motor_speed = M2_minimum_speed - motor_speed
 
-        # set_motors(left_motor_speed, right_motor_speed)
+        set_motors(left_motor_speed, right_motor_speed)
         # time.sleep(0.01)  # 10ms pętla
 
         # Interwał czasowy (np. 1 sekunda)
         print("pos:",cX,"prev:",previous_pos,"error:",error,"motorspeed:", motor_speed)
         previous_pos = cX
-        time.sleep(1)
+        time.sleep(0.01)
 
 except KeyboardInterrupt:
     print("Przerwano działanie programu.")
