@@ -19,11 +19,11 @@ import numpy as np
 
 # Stałe PID i prędkości silników
 KP = 4
-KD = 6
-M1_minimum_speed = 75
-M2_minimum_speed = 75
-M1_maximum_speed = 120
-M2_maximum_speed = 120
+KD = 4
+M1_minimum_speed = 105
+M2_minimum_speed = 105
+M1_maximum_speed = 150
+M2_maximum_speed = 150
 # Piny GPIO
 EMITTER_PIN = 2  # Sterowanie diodami IR (jeśli używane)
 PWM_pin_A = 12  # PWM dla pierwszego silnika
@@ -118,7 +118,7 @@ def search_for_contures():
 
     # Dilatacja krawędzi, aby wzmocnić kontury
     kernel = np.ones((5, 5), np.uint8)
-    dilated_edges = cv2.dilate(edges, kernel, iterations=2)
+    dilated_edges = cv2.dilate(edges, kernel, iterations=4)
 
     # Znalezienie konturów
     contours, _ = cv2.findContours(dilated_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -149,8 +149,8 @@ def search_for_centroid(image):
     # Obliczanie średniej jasności obrazu
     mean_intensity = np.mean(gray_img)
     # Ustalanie progów w zależności od średniej jasności
-    lower_thresh = int(max(0, 0.66 * mean_intensity))
-    upper_thresh = int(min(255, 1.03 * mean_intensity))
+    lower_thresh = int(max(0, 0.33 * mean_intensity))
+    upper_thresh = int(min(255, 0.73 * mean_intensity))
 
     # Detekcja krawędzi (Canny) z dynamicznymi progami
     edges = cv2.Canny(blurred_img, threshold1=lower_thresh, threshold2=upper_thresh)
@@ -193,17 +193,20 @@ try:
     while True:
         cX = search_for_centroid(image=image)
         print(f"Środek: ({cX})")    
-        if cX<30 and previous_pos>90:
-            cX=98
+        # if cX<30 and previous_pos>90:
+        #     cX=98
         image = picam2.capture_array()
         # # TODO:Sterowanie silnikami
-        error = cX - 10
+        # error = cX
+        error = cX -12
 
         motor_speed = KP * error + KD * (error - last_error)
         last_error = error
 
-        left_motor_speed = M1_minimum_speed + motor_speed
-        right_motor_speed = M2_minimum_speed - motor_speed
+        left_motor_speed = (M1_minimum_speed + motor_speed)
+        right_motor_speed = (M2_minimum_speed - motor_speed)
+        time.sleep(0.001)
+        print("L:",left_motor_speed,"R:",right_motor_speed)
 
         set_motors(left_motor_speed, right_motor_speed)
         # time.sleep(0.01)  # 10ms pętla
@@ -211,7 +214,7 @@ try:
         # Interwał czasowy (np. 1 sekunda)
         print("pos:",cX,"prev:",previous_pos,"error:",error,"motorspeed:", motor_speed)
         previous_pos = cX
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 except KeyboardInterrupt:
     print("Przerwano działanie programu.")

@@ -2,12 +2,14 @@ import RPi.GPIO as GPIO
 import time
 
 # Stałe PID i prędkości silników
-KP = 3
-KD = 4
+KP = 4
+KI = 0.1  # Człon całkujący
+KD = 6
+INTEGRAL_LIMIT = 1000  # Ograniczenie akumulowanego błędu
 M1_minimum_speed = 100
 M2_minimum_speed = 100
-M1_maximum_speed = 200
-M2_maximum_speed = 200
+M1_maximum_speed = 250
+M2_maximum_speed = 250
 NUM_SENSORS = 5  # liczba używanych czujników
 TIMEOUT = 0.0025  # 2500 us w sekundach
 DEBUG = False
@@ -111,7 +113,6 @@ def read_line(min_values, max_values):
         max(0, min(1000, 1000 * (raw_values[i] - min_values[i]) // (max_values[i] - min_values[i] + 1)))
         for i in range(NUM_SENSORS)
     ]
-    print(normalized)
     if DEBUG:
         print("Raw values:", raw_values)
         print("Normalized values:", normalized)
@@ -141,20 +142,23 @@ def main():
         setup_pins()
         min_values, max_values = calibrate_sensors()
         last_error = 0
+        integral = 0
 
         while True:
             position, sensor_values = read_line(min_values, max_values)
             error = position - 2000
 
-            motor_speed = KP * error + KD * (error - last_error)
+            # PID kontrola
+            integral += error
+            integral = max(-INTEGRAL_LIMIT, min(INTEGRAL_LIMIT, integral))  # Ograniczenie całki
+            motor_speed = KP * error + KI * integral + KD * (error - last_error)
             last_error = error
 
             left_motor_speed = M1_minimum_speed + motor_speed
             right_motor_speed = M2_minimum_speed - motor_speed
 
-            # set_motors(130,130)
             set_motors(left_motor_speed, right_motor_speed)
-            print("pos:",position,"error:",error,"motorspeed:", motor_speed)
+            print(f"Pos: {position}, Error: {error}, Motor Speed: {motor_speed}")
             time.sleep(0.01)  # 10ms pętla
     except KeyboardInterrupt:
         pwm_A.stop()
