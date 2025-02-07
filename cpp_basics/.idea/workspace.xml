@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="cpp_basics" targetName="gmock" />
+      <config projectName="cpp_basics" targetName="konfig_run" />
+      <config projectName="cpp_basics" targetName="konfig_test" />
+      <config projectName="cpp_basics" targetName="gmock_main" />
+      <config projectName="cpp_basics" targetName="gtest" />
+      <config projectName="cpp_basics" targetName="gtest_main" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9b7e0c17-750f-4863-ac33-2eabe66ca80f" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="3.2" />
+  </component>
+  <component name="ProjectId" id="2SkT0z2PxNfOCdzgNL7oigZLqVa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "C:/Users/domko/CLionProjects/C_piaskownica",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.editor.code.editing",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\domko\CLionProjects\cpp_basics\test" />
+      <recent name="C:\Users\domko\CLionProjects\cpp_basics" />
+      <recent name="C:\Users\domko\CLionProjects\cpp_basics\Google_Test" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.konfig_run">
+    <configuration name="All in test_rectangle.cpp" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_test" TEST_PATTERN="all-tests(file://$PROJECT_DIR$/test/test_rectangle.cpp)" TEST_MODE="PATTERN">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AvgTest.Average" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_test" TEST_CLASS="AvgTest" TEST_METHOD="Average" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PrimeTest.PrimeNumbersVector" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_test" TEST_CLASS="PrimeTest" TEST_METHOD="PrimeNumbersVector" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SweetTest.amounttest" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_test" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_test" TEST_CLASS="SweetTest" TEST_METHOD="amounttest" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="konfig_run" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_run" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="konfig_test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_test" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="konfig_run" type="CMakeRunConfiguration" factoryName="Application" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cpp_basics" TARGET_NAME="konfig_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cpp_basics" RUN_TARGET_NAME="konfig_run">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.konfig_run" />
+      <item itemvalue="Google Test.konfig_run" />
+      <item itemvalue="Google Test.konfig_test" />
+      <item itemvalue="Google Test.All in test_rectangle.cpp" />
+      <item itemvalue="Google Test.SweetTest.amounttest" />
+      <item itemvalue="Google Test.AvgTest.Average" />
+      <item itemvalue="Google Test.PrimeTest.PrimeNumbersVector" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="CMake Application.konfig_run" />
+        <item itemvalue="Google Test.SweetTest.amounttest" />
+        <item itemvalue="Google Test.All in test_rectangle.cpp" />
+        <item itemvalue="Google Test.AvgTest.Average" />
+        <item itemvalue="Google Test.PrimeTest.PrimeNumbersVector" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9b7e0c17-750f-4863-ac33-2eabe66ca80f" name="Changes" comment="" />
+      <created>1689689359759</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1689689359759</updated>
+      <workItem from="1689689361695" duration="15838000" />
+      <workItem from="1689864796543" duration="728000" />
+      <workItem from="1689866674743" duration="1477000" />
+      <workItem from="1689869061709" duration="4822000" />
+      <workItem from="1690198266188" duration="1881000" />
+      <workItem from="1690200452376" duration="9540000" />
+      <workItem from="1690213901846" duration="2602000" />
+      <workItem from="1690296882112" duration="3156000" />
+      <workItem from="1690354584839" duration="8481000" />
+      <workItem from="1690382712783" duration="7271000" />
+      <workItem from="1690439732225" duration="5584000" />
+      <workItem from="1690735716168" duration="1000" />
+      <workItem from="1691047957283" duration="17000" />
+      <workItem from="1691048010118" duration="3000" />
+      <workItem from="1691048111006" duration="354000" />
+      <workItem from="1691146366364" duration="1274000" />
+      <workItem from="1691314897730" duration="1138000" />
+      <workItem from="1691488750064" duration="264000" />
+      <workItem from="1691513376759" duration="45000" />
+      <workItem from="1692088832025" duration="2708000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
